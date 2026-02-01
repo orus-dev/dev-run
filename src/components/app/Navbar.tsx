@@ -1,19 +1,7 @@
 import Link from "next/link";
 import { Timer, Trophy, User, Zap } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 const Navbar = () => {
-  const pathname = usePathname();
-
-  const navLinks = [
-    { to: "/problems", label: "Problems", icon: Zap },
-    { to: "/run", label: "Run", icon: Timer },
-    { to: "/leaderboards", label: "Leaderboards", icon: Trophy },
-    { to: "/profile", label: "Profile", icon: User },
-  ];
-
-  const isActive = (path: string) => pathname === path;
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto px-6">
@@ -34,19 +22,22 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                href={to}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${isActive(to)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  }`}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </Link>
-            ))}
+            <Link href="/problems" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-secondary">
+              <Zap className="h-4 w-4" />
+              Problems
+            </Link>
+            <Link href="/run" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-secondary">
+              <Timer className="h-4 w-4" />
+              Run
+            </Link>
+            <Link href="/leaderboards" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-secondary">
+              <Trophy className="h-4 w-4" />
+              Leaderboards
+            </Link>
+            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-secondary">
+              <User className="h-4 w-4" />
+              Profile
+            </Link>
           </div>
 
           {/* CTA Button */}
