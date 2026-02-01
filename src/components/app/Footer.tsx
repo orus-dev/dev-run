@@ -8,7 +8,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Timer className="h-6 w-6 text-primary" />
+              <img alt="Logo" src="/dev-run.svg" className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110" />
               <span className="text-lg font-bold">
                 Dev<span className="text-primary">Run</span>
               </span>

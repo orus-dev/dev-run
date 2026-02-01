@@ -12,7 +12,7 @@ const Navbar = () => {
             className="flex items-center gap-2 group"
           >
             <div className="relative">
-              <Timer className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110" />
+              <img alt="Logo" src="/dev-run.svg" className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110" />
               <div className="absolute inset-0 bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <span className="text-xl font-bold text-foreground">
