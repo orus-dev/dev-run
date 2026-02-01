@@ -4,7 +4,6 @@
 /* Dark variant helper */
 @custom-variant dark (&:is(.dark *));
 
-/* Map your DevRun tokens into Tailwind theme variables */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -59,24 +58,58 @@
 
 /* Dark theme variables */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: rgb(9, 9, 12);
+  --foreground: rgb(245, 245, 245);
+
+  --card: rgb(14, 14, 19);
+  --card-foreground: rgb(245, 245, 245);
+
+  --popover: rgb(14, 14, 19);
+  --popover-foreground: rgb(245, 245, 245);
+
+  /* Signature purple */
+  --primary: rgb(201, 133, 255);
+  --primary-foreground: rgb(9, 9, 12);
+
+  --secondary: rgb(27, 27, 34);
+  --secondary-foreground: rgb(217, 217, 217);
+
+  --muted: rgb(34, 34, 43);
+  --muted-foreground: rgb(134, 134, 147);
+
+  --accent: rgb(201, 133, 255);
+  --accent-foreground: rgb(9, 9, 12);
+
+  --destructive: rgb(222, 45, 45);
+  --destructive-foreground: rgb(250, 250, 250);
+
+  --border: rgb(41, 41, 51);
+  --input: rgb(41, 41, 51);
+
+  --ring: rgb(201, 133, 255);
+
+  /* Custom DevRun tokens */
+  --glow-primary: rgb(201, 133, 255);
+  --glow-gold: rgb(249, 196, 47);
+  --glow-silver: rgb(191, 191, 191);
+  --glow-bronze: rgb(217, 140, 38);
+
+  --success: rgb(28, 201, 97);
+  --warning: rgb(249, 196, 47);
+
+  /* Gradients */
+  --gradient-purple: linear-gradient(135deg,
+      rgb(201, 133, 255) 0%,
+      rgb(176, 82, 236) 100%);
+
+  --gradient-card: linear-gradient(180deg,
+      rgb(18, 18, 25) 0%,
+      rgb(11, 11, 16) 100%);
+
+  --gradient-hero: radial-gradient(ellipse at top,
+      rgba(201, 133, 255, 0.15) 0%,
+      transparent 60%);
+
 }
 
 /* Base layer */
@@ -126,5 +159,156 @@
 
   .hover-underline:hover::after {
     @apply w-full;
+  }
+}
+
+@layer components {
+
+  /* ===== Glow effects ===== */
+  .glow-purple {
+    box-shadow:
+      0 0 20px color-mix(in oklch, var(--primary) 30%, transparent),
+      0 0 40px color-mix(in oklch, var(--primary) 10%, transparent);
+  }
+
+  .glow-purple-intense {
+    box-shadow:
+      0 0 30px color-mix(in oklch, var(--primary) 50%, transparent),
+      0 0 60px color-mix(in oklch, var(--primary) 20%, transparent);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px color-mix(in oklch, var(--chart-4) 40%, transparent);
+  }
+
+  .glow-silver {
+    box-shadow: 0 0 20px color-mix(in oklch, var(--foreground) 30%, transparent);
+  }
+
+  .glow-bronze {
+    box-shadow: 0 0 20px color-mix(in oklch, var(--chart-5) 30%, transparent);
+  }
+
+  /* ===== Text glow ===== */
+  .text-glow {
+    text-shadow: 0 0 20px color-mix(in oklch, var(--primary) 50%, transparent);
+  }
+
+  /* ===== Hover underline ===== */
+  .hover-underline {
+    @apply relative;
+  }
+
+  .hover-underline::after {
+    content: "";
+    @apply absolute left-0 bottom-0 h-[2px] w-0 bg-primary transition-all duration-300;
+  }
+
+  .hover-underline:hover::after {
+    @apply w-full;
+  }
+
+  /* ===== Card hover ===== */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 10px 40px color-mix(in oklch, var(--primary) 15%, transparent);
+  }
+
+  /* ===== Timer / mono UI ===== */
+  .timer-display {
+    font-family: var(--font-geist-mono);
+    @apply text-6xl font-bold tracking-wider;
+    text-shadow: 0 0 30px color-mix(in oklch, var(--primary) 60%, transparent);
+  }
+
+  .split-time {
+    font-family: var(--font-geist-mono);
+    @apply text-sm tracking-wide;
+  }
+
+  /* ===== Rank badges ===== */
+  .rank-gold {
+    @apply bg-gradient-to-r from-yellow-500 to-amber-400 text-black;
+  }
+
+  .rank-silver {
+    @apply bg-gradient-to-r from-gray-300 to-gray-400 text-black;
+  }
+
+  .rank-bronze {
+    @apply bg-gradient-to-r from-orange-600 to-amber-700 text-white;
+  }
+
+  /* ===== Difficulty badges ===== */
+  .diff-easy {
+    @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
+  }
+
+  .diff-medium {
+    @apply bg-amber-500/20 text-amber-400 border border-amber-500/30;
+  }
+
+  .diff-hard {
+    @apply bg-red-500/20 text-red-400 border border-red-500/30;
+  }
+
+  /* ===== Animations ===== */
+  .pulse-live {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+
+  /* ===== Stagger delays ===== */
+  .stagger-1 {
+    animation-delay: 0.1s;
+  }
+
+  .stagger-2 {
+    animation-delay: 0.2s;
+  }
+
+  .stagger-3 {
+    animation-delay: 0.3s;
+  }
+
+  .stagger-4 {
+    animation-delay: 0.4s;
+  }
+
+  .stagger-5 {
+    animation-delay: 0.5s;
+  }
+}
+
+@layer utilities {
+  @keyframes pulse-glow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }

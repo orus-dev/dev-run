@@ -45,7 +45,7 @@ const Landing = () => {
           style={{ background: 'radial-gradient(ellipse at top, hsl(270 91% 75% / 0.12) 0%, transparent 60%)' }}
         />
 
-        <div className="container mx-auto px-6 relative">
+        <div className="container mx-auto px-6 relative pt-24">
           <div className="max-w-4xl mx-auto text-center">
             {/* Headline */}
             <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 animate-fade-in stagger-1 opacity-0" style={{ animationFillMode: 'forwards' }}>
