@@ -1,3 +1,5 @@
+"use client";
+
 import { Timer, Zap, Trophy, Users, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
