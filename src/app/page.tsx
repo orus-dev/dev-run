@@ -45,12 +45,6 @@ const Landing = () => {
 
         <div className="container mx-auto px-6 relative">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8 animate-fade-in">
-              <Zap className="h-4 w-4" />
-              <span>The speedrunning platform for developers</span>
-            </div>
-
             {/* Headline */}
             <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 animate-fade-in stagger-1 opacity-0" style={{ animationFillMode: 'forwards' }}>
               Code Fast.{" "}
