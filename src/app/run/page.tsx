@@ -1,7 +1,11 @@
 "use client";
 
 import { FileTree } from "@sinm/react-file-tree";
-import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import CodeMirror, {
+  EditorState,
+  EditorView,
+  ReactCodeMirrorRef,
+} from "@uiw/react-codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { useEffect, useRef } from "react";
 
@@ -99,7 +103,14 @@ export default function Run() {
               readOnly
               className="w-full h-full"
               value="yo"
-              extensions={[]}
+              extensions={[
+                EditorState.transactionFilter.of((tr) => {
+                  if (tr.selection && tr.isUserEvent("select")) {
+                    return [];
+                  }
+                  return tr;
+                }),
+              ]}
               theme={vscodeDark}
               onCreateEditor={(view) => {
                 view.focus();
