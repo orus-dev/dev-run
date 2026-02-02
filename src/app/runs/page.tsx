@@ -58,6 +58,13 @@ const liveRuns = [
 /* ---------------- page ---------------- */
 
 export default function LiveRuns() {
+  // Sort top runners (status === 'pb') to the top
+  const sortedRuns = [...liveRuns].sort((a, b) => {
+    if (a.status === "pb" && b.status !== "pb") return -1;
+    if (a.status !== "pb" && b.status === "pb") return 1;
+    return 0;
+  });
+
   return (
     <div className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-6 space-y-8">
@@ -105,7 +112,7 @@ export default function LiveRuns() {
             </TableHeader>
 
             <TableBody>
-              {liveRuns.map((run) => (
+              {sortedRuns.map((run) => (
                 <LiveRunRow key={run.id} {...run} />
               ))}
             </TableBody>
@@ -116,20 +123,19 @@ export default function LiveRuns() {
   );
 }
 
-/* ---------------- row ---------------- */
-
 function LiveRunRow({ username, problem, category, time, pace, status }: any) {
   const pacePositive = pace.startsWith("+");
+  const isTop = status === "pb";
 
   return (
     <TableRow
       className={
-        status === "pb"
-          ? "bg-primary/5 hover:bg-primary/10"
-          : "hover:bg-secondary/50"
+        isTop ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/50"
       }
     >
-      <TableCell className="font-medium">{username}</TableCell>
+      <TableCell className="font-medium">
+        {isTop ? `🔥 ${username}` : username}
+      </TableCell>
 
       <TableCell>
         <div className="flex flex-col gap-1">
@@ -140,7 +146,11 @@ function LiveRunRow({ username, problem, category, time, pace, status }: any) {
         </div>
       </TableCell>
 
-      <TableCell className="font-mono text-primary">{time}</TableCell>
+      <TableCell
+        className={`font-mono ${isTop ? "text-primary font-bold" : ""}`}
+      >
+        {time}
+      </TableCell>
 
       <TableCell>
         <Badge
@@ -159,10 +169,10 @@ function LiveRunRow({ username, problem, category, time, pace, status }: any) {
           <span
             className={`h-2 w-2 rounded-full ${
               status === "pb"
-                ? "bg-green-500 animate-pulse"
+                ? "bg-green-500"
                 : status === "danger"
-                  ? "bg-red-500 animate-pulse"
-                  : "bg-emerald-400 animate-pulse"
+                  ? "bg-red-500"
+                  : "bg-emerald-400"
             }`}
           />
           Live
@@ -170,7 +180,7 @@ function LiveRunRow({ username, problem, category, time, pace, status }: any) {
       </TableCell>
 
       <TableCell className="text-right">
-        <Button size="sm" variant="ghost">
+        <Button size="sm" variant={isTop ? "default" : "ghost"}>
           <Eye className="h-4 w-4 mr-1" />
           Watch
         </Button>
