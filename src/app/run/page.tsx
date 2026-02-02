@@ -84,7 +84,7 @@ const Run = () => {
             {/* Timer Display */}
             <div className="bg-card border border-border rounded-2xl p-8 mb-6 text-center relative overflow-hidden">
               {/* Background glow */}
-              <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
 
               <div className="relative">
                 {/* Timer */}

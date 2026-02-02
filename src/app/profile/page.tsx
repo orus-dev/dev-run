@@ -111,12 +111,12 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="bg-card border border-border rounded-2xl p-8 mb-8 relative overflow-hidden">
           {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-r from-primary/10 via-transparent to-transparent pointer-events-none" />
 
           <div className="relative flex flex-col md:flex-row items-start md:items-center gap-6">
             {/* Avatar */}
             <div className="relative">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary to-primary/50 flex items-center justify-center text-3xl font-bold text-primary-foreground glow-purple">
+              <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-primary to-primary/50 flex items-center justify-center text-3xl font-bold text-primary-foreground glow-purple">
                 {user.username.charAt(0).toUpperCase()}
               </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg rank-gold flex items-center justify-center text-sm font-bold glow-gold">
