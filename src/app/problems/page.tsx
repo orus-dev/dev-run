@@ -189,13 +189,6 @@ const Problems = () => {
             <ProblemCard key={problem.name} {...problem} index={i} />
           ))}
         </div>
-
-        {/* Load More */}
-        <div className="mt-12 text-center">
-          <button className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-medium hover:bg-secondary/80 transition-all">
-            Load More Problems
-          </button>
-        </div>
       </div>
     </div>
   );
