@@ -42,7 +42,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden h-svh flex flex-col items-center justify-center">
+      <section className="pt-16 relative overflow-hidden h-svh flex flex-col items-center justify-center">
         {/* Background gradient */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -52,7 +52,7 @@ const Landing = () => {
           }}
         />
 
-        <div className="container mx-auto px-6 relative pt-20">
+        <div className="container mx-auto px-6 relative">
           <div className="max-w-4xl mx-auto text-center">
             {/* Headline */}
             <h1
