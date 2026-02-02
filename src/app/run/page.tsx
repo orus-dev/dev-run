@@ -1,13 +1,12 @@
 "use client";
 
 import { FileTree } from "@sinm/react-file-tree";
-import CodeMirror, {
-  EditorState,
-  EditorView,
-  ReactCodeMirrorRef,
-} from "@uiw/react-codemirror";
+import CodeMirror, { EditorState } from "@uiw/react-codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { useEffect, useRef } from "react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 type RunInfo = {
   category: "any%" | "100%";
@@ -24,45 +23,6 @@ type ChatMessage = {
 };
 
 export default function Run() {
-  const splits = [
-    {
-      problemName: "Two Sum Dash",
-      splitTime: "0:38",
-      delta: "-0:04",
-      isCompleted: true,
-      pbTime: "0:42",
-    },
-    {
-      problemName: "Binary Sprint",
-      splitTime: "1:12",
-      delta: "+0:02",
-      isCompleted: true,
-      pbTime: "0:32",
-    },
-    {
-      problemName: "String Scramble",
-      splitTime: "--:--",
-      delta: undefined,
-      isCompleted: false,
-      isCurrent: true,
-      pbTime: "0:55",
-    },
-    {
-      problemName: "Linked List Rush",
-      splitTime: "--:--",
-      delta: undefined,
-      isCompleted: false,
-      pbTime: "1:24",
-    },
-    {
-      problemName: "Stack Overflow",
-      splitTime: "--:--",
-      delta: undefined,
-      isCompleted: false,
-      pbTime: "1:42",
-    },
-  ];
-
   const runInfo: RunInfo = {
     category: "any%",
     problems: 5,
@@ -71,7 +31,7 @@ export default function Run() {
     currentAttempt: 47,
   };
 
-  const chatMessages = [
+  const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
     { user: "Bob", message: "Watch out for the string problem!", time: "1:54" },
     { user: "Charlie", message: "PB incoming? 👀", time: "1:55" },
@@ -80,107 +40,112 @@ export default function Run() {
   return (
     <div className="h-svh px-20 pt-24 pb-12 flex gap-8">
       {/* Editor */}
-      <div className="h-full w-full bg-card rounded-2xl flex overflow-clip">
-        <div className="h-full w-2xs border-r-2 p-5">
-          <FileTree
-            tree={{
-              type: "directory",
-              uri: "my-app",
-              expanded: true,
-              children: [
-                {
-                  type: "file",
-                  uri: "myfile.js",
-                },
-              ],
-            }}
-          />
-        </div>
-        <div className="h-full w-full p-5 pt-4">
-          <header>myfile.js</header>
-          <div className="pt-3 pb-5 w-full h-full">
-            <CodeMirror
-              readOnly
-              className="w-full h-full"
-              value="yo"
-              extensions={[
-                EditorState.transactionFilter.of((tr) => {
-                  if (tr.selection && tr.isUserEvent("select")) {
-                    return [];
-                  }
-                  return tr;
-                }),
-              ]}
-              theme={vscodeDark}
-              onCreateEditor={(view) => {
-                view.focus();
-
-                view.dispatch({
-                  selection: { anchor: 1 },
-                  scrollIntoView: true,
-                });
+      <Card className="flex-1 overflow-hidden">
+        <CardContent className="flex h-full">
+          {/* File tree */}
+          <div className="w-2xs border-r border-border">
+            <FileTree
+              tree={{
+                type: "directory",
+                uri: "my-app",
+                expanded: true,
+                children: [{ type: "file", uri: "myfile.js" }],
               }}
             />
           </div>
-        </div>
-      </div>
+
+          {/* Code */}
+          <div className="flex-1 pl-5 flex flex-col">
+            <header className="text-sm font-medium text-muted-foreground">
+              myfile.js
+            </header>
+
+            <div className="flex-1 pt-3 pb-5">
+              <CodeMirror
+                readOnly
+                className="h-full w-full"
+                value="yo"
+                extensions={[
+                  EditorState.transactionFilter.of((tr) => {
+                    if (tr.selection && tr.isUserEvent("select")) {
+                      return [];
+                    }
+                    return tr;
+                  }),
+                ]}
+                theme={vscodeDark}
+                onCreateEditor={(view) => {
+                  view.focus();
+                  view.dispatch({
+                    selection: { anchor: 1 },
+                    scrollIntoView: true,
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Timer & Chat */}
-      <div className="flex flex-col gap-6 h-full">
-        <Timer runInfo={runInfo} />
-        <Chat chatMessages={chatMessages} />
+      <div className="flex flex-col gap-6 h-full w-sm">
+        <RunTimer runInfo={runInfo} />
+        <RunChat chatMessages={chatMessages} />
       </div>
     </div>
   );
 }
 
-function Timer({ runInfo }: { runInfo: RunInfo }) {
+/* ---------------- Timer ---------------- */
+
+function RunTimer({ runInfo }: { runInfo: RunInfo }) {
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 text-center relative">
-      <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none rounded-t-2xl" />
-      <div className="relative">
+    <Card className="relative text-center overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
+      <CardContent className="relative">
         <p className="timer-display text-primary text-4xl font-bold">1:52.34</p>
-        <p className="text-muted-foreground mt-2 font-mono text-sm">
+        <p className="mt-2 font-mono text-sm text-muted-foreground">
           PB: {runInfo.pbTime} | Diff:{" "}
           <span className="text-red-400">+0:12</span>
         </p>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
-function Chat({ chatMessages }: { chatMessages: ChatMessage[] }) {
+/* ---------------- Chat ---------------- */
+
+function RunChat({ chatMessages }: { chatMessages: ChatMessage[] }) {
   return (
-    <div className="h-full flex flex-col flex-1 w-sm bg-card border border-border rounded-xl p-4">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-foreground">Chat</h3>
-        <span className="text-xs text-muted-foreground">
-          {chatMessages.length} messages
-        </span>
-      </div>
+    <Card className="flex flex-col flex-1">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">Chat</CardTitle>
+          <span className="text-xs text-muted-foreground">
+            {chatMessages.length} messages
+          </span>
+        </div>
+      </CardHeader>
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto space-y-2">
-        {chatMessages.map((msg, idx) => (
-          <div key={idx} className="bg-secondary/50 rounded-lg p-2">
-            <span className="font-semibold text-foreground">{msg.user}</span>:{" "}
-            <span className="text-muted-foreground">{msg.message}</span>
-            <span className="text-xs text-muted-foreground ml-2">
-              {msg.time}
-            </span>
-          </div>
-        ))}
-      </div>
+      <Separator />
 
-      {/* Input */}
-      <div className="mt-4">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          className="w-full rounded-lg border border-border p-2 text-sm bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-      </div>
-    </div>
+      <CardContent className="flex flex-col flex-1 gap-3">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto space-y-2">
+          {chatMessages.map((msg, i) => (
+            <div key={i} className="rounded-lg bg-secondary/50 p-2 text-sm">
+              <span className="font-semibold text-foreground">{msg.user}</span>:{" "}
+              <span className="text-muted-foreground">{msg.message}</span>
+              <span className="ml-2 text-xs text-muted-foreground">
+                {msg.time}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Input */}
+        <Input placeholder="Type a message…" />
+      </CardContent>
+    </Card>
   );
 }
