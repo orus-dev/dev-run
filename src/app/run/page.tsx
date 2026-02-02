@@ -1,6 +1,6 @@
-import { Play, Pause, RotateCcw, Flag, ChevronRight } from "lucide-react";
-import SplitRow from "@/components/app/SplitRow";
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { FileTree } from "@sinm/react-file-tree";
 
 type RunInfo = {
   category: "any%" | "100%";
@@ -70,10 +70,26 @@ export default function Run() {
     { user: "Charlie", message: "PB incoming? 👀", time: "1:55" },
   ];
 
+  const codebase = [];
+
   return (
     <div className="h-svh px-20 pt-24 pb-12 flex gap-8">
       {/* Editor */}
-      <div className="h-full w-full bg-card rounded-2xl"></div>
+      <div className="h-full w-full bg-card rounded-2xl flex overflow-clip">
+        <div className="h-full w-2xs border-r-2 p-5">
+          <FileTree
+            tree={{
+              type: "directory",
+              uri: "my-app",
+              children: [],
+            }}
+          />
+        </div>
+        <div className="h-full w-full overflow-y-scroll p-5">
+          <header>myfile.js</header>
+          <div className="mt-3"></div>
+        </div>
+      </div>
 
       {/* Timer & Chat */}
       <div className="flex flex-col gap-6 h-full">
