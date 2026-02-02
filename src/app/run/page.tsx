@@ -1,6 +1,9 @@
 "use client";
 
 import { FileTree } from "@sinm/react-file-tree";
+import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { useEffect, useRef } from "react";
 
 type RunInfo = {
   category: "any%" | "100%";
@@ -70,8 +73,6 @@ export default function Run() {
     { user: "Charlie", message: "PB incoming? 👀", time: "1:55" },
   ];
 
-  const codebase = [];
-
   return (
     <div className="h-svh px-20 pt-24 pb-12 flex gap-8">
       {/* Editor */}
@@ -81,13 +82,35 @@ export default function Run() {
             tree={{
               type: "directory",
               uri: "my-app",
-              children: [],
+              expanded: true,
+              children: [
+                {
+                  type: "file",
+                  uri: "myfile.js",
+                },
+              ],
             }}
           />
         </div>
-        <div className="h-full w-full overflow-y-scroll p-5">
+        <div className="h-full w-full p-5 pt-4">
           <header>myfile.js</header>
-          <div className="mt-3"></div>
+          <div className="pt-3 pb-5 w-full h-full">
+            <CodeMirror
+              readOnly
+              className="w-full h-full"
+              value="yo"
+              extensions={[]}
+              theme={vscodeDark}
+              onCreateEditor={(view) => {
+                view.focus();
+
+                view.dispatch({
+                  selection: { anchor: 1 },
+                  scrollIntoView: true,
+                });
+              }}
+            />
+          </div>
         </div>
       </div>
 
