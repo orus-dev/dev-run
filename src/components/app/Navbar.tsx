@@ -19,7 +19,7 @@ const navs = [
   {
     link: "/runs",
     icon: Radio,
-    name: "Runs",
+    name: "Live",
   },
 ];
 
