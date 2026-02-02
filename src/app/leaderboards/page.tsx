@@ -281,7 +281,7 @@ const Leaderboards = () => {
           <button className="px-3 py-1.5 rounded-lg bg-secondary text-muted-foreground hover:text-foreground transition-all">
             Previous
           </button>
-          {[1, 2, 3, "...", 50].map((page, i) => (
+          {[1, 2, 3, 50].map((page, i) => (
             <button
               key={i}
               className={`px-3 py-1.5 rounded-lg transition-all ${
