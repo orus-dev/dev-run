@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Timer, Trophy, User, Zap } from "lucide-react";
+import { Radio, Trophy, Zap } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -18,13 +18,8 @@ const navs = [
   },
   {
     link: "/runs",
-    icon: Timer,
+    icon: Radio,
     name: "Runs",
-  },
-  {
-    link: "/profile",
-    icon: User,
-    name: "Profile",
   },
 ];
 
