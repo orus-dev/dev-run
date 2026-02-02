@@ -41,7 +41,7 @@ const LeaderboardRow = ({ rank, username, pb, runsCount, category, index = 0 }: 
       {/* Username */}
       <td className="py-4 px-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/50 to-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+          <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary/50 to-primary/20 flex items-center justify-center text-xs font-bold text-primary">
             {username.charAt(0).toUpperCase()}
           </div>
           <span className={`font-medium ${isTopThree ? 'text-foreground' : 'text-secondary-foreground'} group-hover:text-primary transition-colors`}>

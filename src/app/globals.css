@@ -154,7 +154,7 @@
 
   .hover-underline::after {
     content: "";
-    @apply absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-300;
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
   }
 
   .hover-underline:hover::after {
@@ -178,15 +178,16 @@
   }
 
   .glow-gold {
-    box-shadow: 0 0 20px color-mix(in oklch, var(--chart-4) 40%, transparent);
+    box-shadow: 0 0 20px color-mix(in oklch, oklch(82.8% 0.189 84.429) 70%, transparent);
+    /* box-shadow: 0 0 20px color-mix(in oklch, var(--chart-4) 40%, transparent); */
   }
 
   .glow-silver {
-    box-shadow: 0 0 20px color-mix(in oklch, var(--foreground) 30%, transparent);
+    box-shadow: 0 0 20px color-mix(in oklch, var(--foreground) 60%, transparent);
   }
 
   .glow-bronze {
-    box-shadow: 0 0 20px color-mix(in oklch, var(--chart-5) 30%, transparent);
+    box-shadow: 0 0 20px color-mix(in oklch, oklch(55.5% 0.163 48.998) 60%, transparent);
   }
 
   /* ===== Text glow ===== */
@@ -201,7 +202,7 @@
 
   .hover-underline::after {
     content: "";
-    @apply absolute left-0 bottom-0 h-[2px] w-0 bg-primary transition-all duration-300;
+    @apply absolute left-0 bottom-0 h-0.5 w-0 bg-primary transition-all duration-300;
   }
 
   .hover-underline:hover::after {
@@ -232,15 +233,15 @@
 
   /* ===== Rank badges ===== */
   .rank-gold {
-    @apply bg-gradient-to-r from-yellow-500 to-amber-400 text-black;
+    @apply bg-linear-to-r from-yellow-500 to-amber-400 text-black;
   }
 
   .rank-silver {
-    @apply bg-gradient-to-r from-gray-300 to-gray-400 text-black;
+    @apply bg-linear-to-r from-gray-300 to-gray-400 text-black;
   }
 
   .rank-bronze {
-    @apply bg-gradient-to-r from-orange-600 to-amber-700 text-white;
+    @apply bg-linear-to-r from-orange-600 to-amber-700 text-white;
   }
 
   /* ===== Difficulty badges ===== */
