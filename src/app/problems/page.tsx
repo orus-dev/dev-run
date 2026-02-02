@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-const Problems = () => {
+export default function Problems() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const categories = ["All", "Arrays", "Trees", "Graphs", "DP", "Strings"];
@@ -90,9 +90,7 @@ const Problems = () => {
       </div>
     </div>
   );
-};
-
-export default Problems;
+}
 
 /* ---------------- data ---------------- */
 
