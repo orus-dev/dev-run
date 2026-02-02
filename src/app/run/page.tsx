@@ -71,9 +71,9 @@ export default function Run() {
   ];
 
   return (
-    <div className="h-svh px-20 pt-24 pb-12 flex">
+    <div className="h-svh px-20 pt-24 pb-12 flex gap-8">
       {/* Editor */}
-      <div className="h-full w-full"></div>
+      <div className="h-full w-full bg-card rounded-2xl"></div>
 
       {/* Timer & Chat */}
       <div className="flex flex-col gap-6 h-full">
@@ -87,7 +87,7 @@ export default function Run() {
 function Timer({ runInfo }: { runInfo: RunInfo }) {
   return (
     <div className="bg-card border border-border rounded-2xl p-6 text-center relative">
-      <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none rounded-t-2xl" />
       <div className="relative">
         <p className="timer-display text-primary text-4xl font-bold">1:52.34</p>
         <p className="text-muted-foreground mt-2 font-mono text-sm">
