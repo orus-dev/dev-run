@@ -12,14 +12,14 @@ const navs = [
     name: "Problems",
   },
   {
-    link: "/run",
-    icon: Timer,
-    name: "Run",
-  },
-  {
     link: "/leaderboards",
     icon: Trophy,
     name: "Leaderboards",
+  },
+  {
+    link: "/runs",
+    icon: Timer,
+    name: "Runs",
   },
   {
     link: "/profile",
