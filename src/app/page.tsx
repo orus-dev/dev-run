@@ -68,9 +68,8 @@ const Landing = () => {
               className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in stagger-2 opacity-0"
               style={{ animationFillMode: "forwards" }}
             >
-              DevRun is competitive programming reimagined. Race the clock
-              through algorithmic challenges, track your splits, and compete for
-              the fastest runs on the global leaderboard.
+              Race the clock through challenges, track your splits, and compete
+              for the fastest runs on the global leaderboard.
             </p>
 
             {/* CTA Buttons */}
