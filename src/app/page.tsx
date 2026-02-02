@@ -4,7 +4,7 @@ import { Timer, Zap, Trophy, Users, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const Landing = () => {
+export default function Landing() {
   const features = [
     {
       icon: Timer,
@@ -183,6 +183,4 @@ const Landing = () => {
       </section>
     </div>
   );
-};
-
-export default Landing;
+}
