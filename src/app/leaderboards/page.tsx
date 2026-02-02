@@ -170,7 +170,7 @@ const weeklyLeaderboard = [
   },
 ];
 
-const Leaderboards = () => {
+export default function Leaderboards() {
   const [activeTab, setActiveTab] = useState<"global" | "weekly">("global");
 
   const categories = ["Any%", "100%", "Easy Only", "No DP", "Blind"];
@@ -268,9 +268,7 @@ const Leaderboards = () => {
       </div>
     </div>
   );
-};
-
-export default Leaderboards;
+}
 
 /* ---------- helpers ---------- */
 
