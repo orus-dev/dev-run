@@ -9,22 +9,26 @@ const Landing = () => {
     {
       icon: Timer,
       title: "Race the Clock",
-      description: "Built-in timer with splits tracking. Every millisecond counts in your pursuit of the perfect run.",
+      description:
+        "Built-in timer with splits tracking. Every millisecond counts in your pursuit of the perfect run.",
     },
     {
       icon: Trophy,
       title: "Compete Globally",
-      description: "Weekly and all-time leaderboards. Claim your spot among the fastest runners worldwide.",
+      description:
+        "Weekly and all-time leaderboards. Claim your spot among the fastest runners worldwide.",
     },
     {
       icon: Zap,
       title: "Quick Runs",
-      description: "No signup walls. Jump into a run instantly and start grinding for that PB.",
+      description:
+        "No signup walls. Jump into a run instantly and start grinding for that PB.",
     },
     {
       icon: Users,
       title: "Community First",
-      description: "Share your runs, compare splits, and celebrate clean runs with fellow speedrunners.",
+      description:
+        "Share your runs, compare splits, and celebrate clean runs with fellow speedrunners.",
     },
   ];
 
@@ -38,29 +42,42 @@ const Landing = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative overflow-hidden h-svh flex flex-col items-center justify-center">
         {/* Background gradient */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at top, hsl(270 91% 75% / 0.12) 0%, transparent 60%)' }}
+          style={{
+            background:
+              "radial-gradient(ellipse at top, hsl(270 91% 45% / 0.25) 0%, transparent 60%)",
+          }}
         />
 
-        <div className="container mx-auto px-6 relative pt-24">
+        <div className="container mx-auto px-6 relative pt-20">
           <div className="max-w-4xl mx-auto text-center">
             {/* Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 animate-fade-in stagger-1 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            <h1
+              className="text-5xl md:text-7xl font-bold text-foreground mb-6 animate-fade-in stagger-1 opacity-0"
+              style={{ animationFillMode: "forwards" }}
+            >
               Code Fast.{" "}
               <span className="text-primary text-glow">Run Faster.</span>
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in stagger-2 opacity-0" style={{ animationFillMode: 'forwards' }}>
-              DevRun is competitive programming reimagined. Race the clock through algorithmic challenges,
-              track your splits, and compete for the fastest runs on the global leaderboard.
+            <p
+              className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in stagger-2 opacity-0"
+              style={{ animationFillMode: "forwards" }}
+            >
+              DevRun is competitive programming reimagined. Race the clock
+              through algorithmic challenges, track your splits, and compete for
+              the fastest runs on the global leaderboard.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3 opacity-0" style={{ animationFillMode: 'forwards' }}>
+            <div
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3 opacity-0"
+              style={{ animationFillMode: "forwards" }}
+            >
               <Link href="/run">
                 <Button variant="hero" className="group">
                   <Play className="h-5 w-5" />
@@ -83,10 +100,17 @@ const Landing = () => {
               <div
                 key={stat.label}
                 className="text-center animate-fade-in opacity-0"
-                style={{ animationDelay: `${0.4 + i * 0.1}s`, animationFillMode: 'forwards' }}
+                style={{
+                  animationDelay: `${0.4 + i * 0.1}s`,
+                  animationFillMode: "forwards",
+                }}
               >
-                <p className="text-3xl md:text-4xl font-bold text-primary font-mono">{stat.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                <p className="text-3xl md:text-4xl font-bold text-primary font-mono">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
@@ -110,13 +134,20 @@ const Landing = () => {
               <div
                 key={feature.title}
                 className="group bg-card border border-border rounded-xl p-6 card-hover animate-fade-in opacity-0"
-                style={{ animationDelay: `${i * 0.1}s`, animationFillMode: 'forwards' }}
+                style={{
+                  animationDelay: `${i * 0.1}s`,
+                  animationFillMode: "forwards",
+                }}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
@@ -127,7 +158,10 @@ const Landing = () => {
       <section className="py-24 border-t border-border relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at bottom, hsl(270 91% 75% / 0.08) 0%, transparent 60%)' }}
+          style={{
+            background:
+              "radial-gradient(ellipse at bottom, hsl(270 91% 75% / 0.08) 0%, transparent 60%)",
+          }}
         />
 
         <div className="container mx-auto px-6 relative">
@@ -136,7 +170,8 @@ const Landing = () => {
               Ready to chase your PB?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Join thousands of runners pushing the limits of competitive programming.
+              Join thousands of runners pushing the limits of competitive
+              programming.
             </p>
             <Link href="/problems">
               <Button variant="hero" className="group">
