@@ -85,7 +85,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <Link href="/leaderboards">
-                <Button variant="hero-outline">
+                <Button variant="hero">
                   <Trophy className="h-5 w-5" />
                   View Leaderboards
                 </Button>
