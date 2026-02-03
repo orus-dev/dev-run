@@ -15,12 +15,12 @@ export default function ContinueWith() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 animate-fade-in stagger-4">
         <Button variant="outline">
           <Github className="h-4 w-4" />
           GitHub
         </Button>
-        <Button variant="outline">
+        <Button variant="outline" className="animate-fade-in stagger-5">
           <Mail className="h-4 w-4" />
           Google
         </Button>
