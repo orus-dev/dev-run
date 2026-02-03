@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Clock, Zap, Users } from "lucide-react";
 
 interface ProblemCardProps {
@@ -81,9 +82,9 @@ const ProblemCard = ({
 
         {/* Quick run button - appears on hover */}
         <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-          <button className="p-2 rounded-lg bg-primary text-primary-foreground">
+          <Button size="p2">
             <Zap className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>
