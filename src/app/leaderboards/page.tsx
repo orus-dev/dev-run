@@ -253,11 +253,11 @@ export default function Leaderboards() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Rank</TableHead>
+                <TableHead className="pl-5">Rank</TableHead>
                 <TableHead>Runner</TableHead>
                 <TableHead>PB</TableHead>
                 <TableHead>Runs</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead className="pr-5">Category</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
