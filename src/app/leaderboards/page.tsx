@@ -191,10 +191,30 @@ export default function Leaderboards() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Globe} label="Total Runners" value="12,453" />
-          <StatCard icon={Trophy} label="World Record" value="2:34.21" />
-          <StatCard icon={TrendingUp} label="Runs This Week" value="847K" />
-          <StatCard icon={Calendar} label="Until Reset" value="5d 12h" />
+          <StatCard
+            icon={Globe}
+            label="Total Runners"
+            value="12,453"
+            index={0}
+          />
+          <StatCard
+            icon={Trophy}
+            label="World Record"
+            value="2:34.21"
+            index={1}
+          />
+          <StatCard
+            icon={TrendingUp}
+            label="Runs This Week"
+            value="847K"
+            index={2}
+          />
+          <StatCard
+            icon={Calendar}
+            label="Until Reset"
+            value="5d 12h"
+            index={3}
+          />
         </div>
 
         {/* Tabs + Filters */}

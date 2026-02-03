@@ -81,10 +81,15 @@ export default function LiveRuns() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Zap} label="Live Runs" value="42" />
-          <StatCard icon={Users} label="Active Runners" value="39" />
-          <StatCard icon={Timer} label="Avg Runtime" value="1:47" />
-          <StatCard icon={TrendingUp} label="PB Pace Runs" value="7" />
+          <StatCard icon={Zap} label="Live Runs" value="42" index={0} />
+          <StatCard icon={Users} label="Active Runners" value="39" index={1} />
+          <StatCard icon={Timer} label="Avg Runtime" value="1:47" index={2} />
+          <StatCard
+            icon={TrendingUp}
+            label="PB Pace Runs"
+            value="7"
+            index={3}
+          />
         </div>
 
         {/* Filters */}
