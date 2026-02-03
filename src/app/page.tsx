@@ -77,7 +77,7 @@ export default function Landing() {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3 opacity-0"
               style={{ animationFillMode: "forwards" }}
             >
-              <Link href="/run">
+              <Link href="/register">
                 <Button variant="hero" className="group">
                   <Play className="h-5 w-5" />
                   Start Your First Run

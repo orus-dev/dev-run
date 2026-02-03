@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ContinueWith from "./ContinueWith";
 
 export function RegisterPage() {
   return (
@@ -55,6 +56,8 @@ export function RegisterPage() {
           <Button className="w-full" variant="secondary">
             Create Account
           </Button>
+
+          <ContinueWith  />
 
           <p className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ContinueWith from "./ContinueWith";
 
 export function LoginPage() {
   return (
@@ -60,27 +61,7 @@ export function LoginPage() {
             Log In
           </Button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline">
-              <Github className="h-4 w-4" />
-              GitHub
-            </Button>
-            <Button variant="outline">
-              <Mail className="h-4 w-4" />
-              Google
-            </Button>
-          </div>
+          <ContinueWith />
 
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
