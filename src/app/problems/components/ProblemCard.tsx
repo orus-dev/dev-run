@@ -9,7 +9,14 @@ interface ProblemCardProps {
   index?: number;
 }
 
-const ProblemCard = ({ name, difficulty, tags, bestTime, attempts, index = 0 }: ProblemCardProps) => {
+const ProblemCard = ({
+  name,
+  difficulty,
+  tags,
+  bestTime,
+  attempts,
+  index = 0,
+}: ProblemCardProps) => {
   const difficultyStyles = {
     easy: "diff-easy",
     medium: "diff-medium",
@@ -23,20 +30,25 @@ const ProblemCard = ({ name, difficulty, tags, bestTime, attempts, index = 0 }: 
   };
 
   return (
-    <div 
+    <div
       className={`group relative bg-card border border-border rounded-xl p-5 card-hover cursor-pointer animate-fade-in opacity-0`}
-      style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
+      style={{
+        animationDelay: `${index * 0.1}s`,
+        animationFillMode: "forwards",
+      }}
     >
       {/* Glow effect on hover */}
       <div className="absolute inset-0 rounded-xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
+
       <div className="relative">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
             {name}
           </h3>
-          <span className={`px-2 py-1 rounded-md text-xs font-medium ${difficultyStyles[difficulty]}`}>
+          <span
+            className={`px-2 py-1 rounded-md text-xs font-medium ${difficultyStyles[difficulty]}`}
+          >
             {difficultyLabels[difficulty]}
           </span>
         </div>
@@ -44,8 +56,8 @@ const ProblemCard = ({ name, difficulty, tags, bestTime, attempts, index = 0 }: 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {tags.map((tag) => (
-            <span 
-              key={tag} 
+            <span
+              key={tag}
               className="px-2 py-1 rounded-md bg-secondary text-muted-foreground text-xs"
             >
               {tag}
@@ -68,7 +80,7 @@ const ProblemCard = ({ name, difficulty, tags, bestTime, attempts, index = 0 }: 
         </div>
 
         {/* Quick run button - appears on hover */}
-        <div className="absolute top-1/2 right-4 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
           <button className="p-2 rounded-lg bg-primary text-primary-foreground">
             <Zap className="h-4 w-4" />
           </button>
