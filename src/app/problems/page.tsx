@@ -3,7 +3,7 @@
 import { Search, Grid, List } from "lucide-react";
 import { useState } from "react";
 
-import ProblemCard from "@/components/app/ProblemCard";
+import ProblemCard from "@/app/problems/components/ProblemCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

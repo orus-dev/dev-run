@@ -5,8 +5,8 @@ import CodeMirror, { EditorState } from "@uiw/react-codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 
 import { Card, CardContent } from "@/components/ui/card";
-import RunTimer, { RunInfo } from "../problems/components/RunTimer";
-import RunChat, { ChatMessage } from "../problems/components/RunChat";
+import RunTimer, { RunInfo } from "./components/RunTimer";
+import RunChat, { ChatMessage } from "./components/RunChat";
 
 export default function Run() {
   const runInfo: RunInfo = {
