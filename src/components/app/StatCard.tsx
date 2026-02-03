@@ -1,35 +1,21 @@
-import { LucideIcon } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface StatCardProps {
+export default function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: any;
   label: string;
   value: string;
-  icon: LucideIcon;
-  trend?: string;
-  index?: number;
-}
-
-const StatCard = ({ label, value, icon: Icon, trend, index = 0 }: StatCardProps) => {
+}) {
   return (
-    <div 
-      className="bg-card border border-border rounded-xl p-5 card-hover animate-fade-in opacity-0"
-      style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="p-2 rounded-lg bg-primary/10">
-          <Icon className="h-5 w-5 text-primary" />
-        </div>
-        {trend && (
-          <span className={`text-xs font-medium ${
-            trend.startsWith('+') ? 'text-emerald-400' : 'text-muted-foreground'
-          }`}>
-            {trend}
-          </span>
-        )}
-      </div>
-      <p className="text-2xl font-bold text-foreground font-mono">{value}</p>
-      <p className="text-sm text-muted-foreground mt-1">{label}</p>
-    </div>
+    <Card>
+      <CardHeader className="pb-2 text-center">
+        <Icon className="mx-auto h-5 w-5 text-primary" />
+        <CardTitle className="font-mono text-2xl">{value}</CardTitle>
+        <p className="text-xs text-muted-foreground">{label}</p>
+      </CardHeader>
+    </Card>
   );
-};
-
-export default StatCard;
+}

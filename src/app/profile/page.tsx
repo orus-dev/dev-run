@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-import StatCard from "@/components/app/StatCard";
+import ProfileStatCard from "@/app/profile/components/ProfileStatCard";
 
 export default function Profile() {
   const user = {
@@ -64,26 +64,26 @@ export default function Profile() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
+          <ProfileStatCard
             label="Total Runs"
             value={user.totalRuns.toLocaleString()}
             icon={Zap}
             index={0}
           />
-          <StatCard
+          <ProfileStatCard
             label="Clean Runs"
             value={user.cleanRuns.toString()}
             icon={Target}
             trend="+12 this week"
             index={1}
           />
-          <StatCard
+          <ProfileStatCard
             label="Global Rank"
             value={`#${user.rank}`}
             icon={Trophy}
             index={2}
           />
-          <StatCard
+          <ProfileStatCard
             label="Avg Time"
             value={user.avgTime}
             icon={Timer}

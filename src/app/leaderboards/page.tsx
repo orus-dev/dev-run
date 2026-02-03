@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/pagination";
 
 import LeaderboardRow from "@/app/leaderboards/components/LeaderboardRow";
-import CenterStatCard from "@/components/app/CenterStatCard";
+import StatCard from "@/components/app/StatCard";
 
 const globalLeaderboard = [
   {
@@ -191,14 +191,10 @@ export default function Leaderboards() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <CenterStatCard icon={Globe} label="Total Runners" value="12,453" />
-          <CenterStatCard icon={Trophy} label="World Record" value="2:34.21" />
-          <CenterStatCard
-            icon={TrendingUp}
-            label="Runs This Week"
-            value="847K"
-          />
-          <CenterStatCard icon={Calendar} label="Until Reset" value="5d 12h" />
+          <StatCard icon={Globe} label="Total Runners" value="12,453" />
+          <StatCard icon={Trophy} label="World Record" value="2:34.21" />
+          <StatCard icon={TrendingUp} label="Runs This Week" value="847K" />
+          <StatCard icon={Calendar} label="Until Reset" value="5d 12h" />
         </div>
 
         {/* Tabs + Filters */}
