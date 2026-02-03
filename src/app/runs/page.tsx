@@ -92,7 +92,7 @@ export default function LiveRuns() {
             </Badge>
           ))}
 
-          <Badge className="ml-auto bg-primary/10 text-primary">
+          <Badge className="bg-primary/10 text-primary">
             🔥 PB Pace
           </Badge>
         </div>
@@ -102,12 +102,12 @@ export default function LiveRuns() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Runner</TableHead>
+                <TableHead className="pl-5">Runner</TableHead>
                 <TableHead>Problem</TableHead>
                 <TableHead>Time</TableHead>
                 <TableHead>Pace</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead />
+                <TableHead className="pr-5" />
               </TableRow>
             </TableHeader>
 
@@ -133,7 +133,7 @@ function LiveRunRow({ username, problem, category, time, pace, status }: any) {
         isTop ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/50"
       }
     >
-      <TableCell className="font-medium">
+      <TableCell className="font-medium pl-5">
         {isTop ? `🔥 ${username}` : username}
       </TableCell>
 
@@ -179,7 +179,7 @@ function LiveRunRow({ username, problem, category, time, pace, status }: any) {
         </div>
       </TableCell>
 
-      <TableCell className="text-right">
+      <TableCell className="text-right pr-5">
         <Button size="sm" variant={isTop ? "default" : "ghost"}>
           <Eye className="h-4 w-4 mr-1" />
           Watch
