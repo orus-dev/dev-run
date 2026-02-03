@@ -23,7 +23,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import LeaderboardRow from "@/components/app/LeaderboardRow";
+import LeaderboardRow from "@/app/leaderboards/components/LeaderboardRow";
 
 const globalLeaderboard = [
   {
