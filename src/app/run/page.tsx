@@ -1,12 +1,14 @@
 "use client";
 
-import { FileTree } from "@sinm/react-file-tree";
 import CodeMirror, { EditorState } from "@uiw/react-codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 
 import { Card, CardContent } from "@/components/ui/card";
 import RunTimer, { RunInfo } from "./components/RunTimer";
 import RunChat, { ChatMessage } from "./components/RunChat";
+import { useState } from "react";
+import { FileTree } from "./components/FileTree";
+import { File } from "lucide-react";
 
 export default function Run() {
   const runInfo: RunInfo = {
@@ -34,16 +36,22 @@ export default function Run() {
               tree={{
                 type: "directory",
                 uri: "my-app",
-                expanded: true,
-                children: [{ type: "file", uri: "myfile.js" }],
+                children: [
+                  { type: "file", uri: "myfile.js" },
+                  {
+                    type: "directory",
+                    uri: "my-app",
+                    children: [{ type: "file", uri: "myfile.js" }],
+                  },
+                ],
               }}
             />
           </div>
 
           {/* Code */}
           <div className="flex-1 pl-5 flex flex-col">
-            <header className="text-sm font-medium text-muted-foreground">
-              myfile.js
+            <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+              <File size={16} /> myfile.js
             </header>
 
             <div className="flex-1 pt-3 pb-5">
