@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Timer, Trophy, User, Zap } from "lucide-react";
+import { Radio, Trophy, User, Zap } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 const navs = [
   {
@@ -18,13 +19,8 @@ const navs = [
   },
   {
     link: "/runs",
-    icon: Timer,
-    name: "Runs",
-  },
-  {
-    link: "/profile",
-    icon: User,
-    name: "Profile",
+    icon: Radio,
+    name: "Live",
   },
 ];
 
@@ -51,7 +47,7 @@ const Navbar = () => {
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
             {navs.map(({ link, icon: Icon, name }) => (
               <Link
                 key={link}
@@ -69,26 +65,11 @@ const Navbar = () => {
 
           {/* CTA Button */}
           <div className="flex items-center gap-4">
-            <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold transition-all duration-300 hover:scale-105 glow-purple hover:glow-purple-intense">
-              Start Run
-            </button>
-
-            {/* Mobile menu button */}
-            <button className="md:hidden p-2 text-muted-foreground hover:text-foreground">
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
+            <Avatar onClick={() => {}}>
+              <AvatarFallback>
+                <User className="m-2" />
+              </AvatarFallback>
+            </Avatar>
           </div>
         </div>
       </div>

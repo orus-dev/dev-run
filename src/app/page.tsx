@@ -4,7 +4,7 @@ import { Timer, Zap, Trophy, Users, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-const Landing = () => {
+export default function Landing() {
   const features = [
     {
       icon: Timer,
@@ -77,7 +77,7 @@ const Landing = () => {
               className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in stagger-3 opacity-0"
               style={{ animationFillMode: "forwards" }}
             >
-              <Link href="/run">
+              <Link href="/register">
                 <Button variant="hero" className="group">
                   <Play className="h-5 w-5" />
                   Start Your First Run
@@ -85,7 +85,7 @@ const Landing = () => {
                 </Button>
               </Link>
               <Link href="/leaderboards">
-                <Button variant="hero-outline">
+                <Button variant="hero">
                   <Trophy className="h-5 w-5" />
                   View Leaderboards
                 </Button>
@@ -183,6 +183,4 @@ const Landing = () => {
       </section>
     </div>
   );
-};
-
-export default Landing;
+}

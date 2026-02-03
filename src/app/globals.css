@@ -215,7 +215,6 @@
   }
 
   .card-hover:hover {
-    @apply -translate-y-1;
     box-shadow: 0 10px 40px color-mix(in oklch, var(--primary) 15%, transparent);
   }
 
