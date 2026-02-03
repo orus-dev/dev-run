@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function StatCard({
+export default function CenterStatCard({
   icon: Icon,
   label,
   value,

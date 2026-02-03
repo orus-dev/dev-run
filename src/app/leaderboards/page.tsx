@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/pagination";
 
 import LeaderboardRow from "@/app/leaderboards/components/LeaderboardRow";
+import CenterStatCard from "@/components/app/CenterStatCard";
 
 const globalLeaderboard = [
   {
@@ -190,10 +191,14 @@ export default function Leaderboards() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Globe} label="Total Runners" value="12,453" />
-          <StatCard icon={Trophy} label="World Record" value="2:34.21" />
-          <StatCard icon={TrendingUp} label="Runs This Week" value="847K" />
-          <StatCard icon={Calendar} label="Until Reset" value="5d 12h" />
+          <CenterStatCard icon={Globe} label="Total Runners" value="12,453" />
+          <CenterStatCard icon={Trophy} label="World Record" value="2:34.21" />
+          <CenterStatCard
+            icon={TrendingUp}
+            label="Runs This Week"
+            value="847K"
+          />
+          <CenterStatCard icon={Calendar} label="Until Reset" value="5d 12h" />
         </div>
 
         {/* Tabs + Filters */}
@@ -267,27 +272,5 @@ export default function Leaderboards() {
         </Pagination>
       </div>
     </div>
-  );
-}
-
-/* ---------- helpers ---------- */
-
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: any;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card>
-      <CardHeader className="pb-2 text-center">
-        <Icon className="mx-auto h-5 w-5 text-primary" />
-        <CardTitle className="font-mono text-2xl">{value}</CardTitle>
-        <p className="text-xs text-muted-foreground">{label}</p>
-      </CardHeader>
-    </Card>
   );
 }

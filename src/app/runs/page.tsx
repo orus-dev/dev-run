@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import LiveRunRow from "./components/LiveRunNow";
-import StatCard from "./components/StatCard";
+import CenterStatCard from "@/components/app/CenterStatCard";
 
 /* ---------------- mock data ---------------- */
 
@@ -81,10 +81,10 @@ export default function LiveRuns() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard icon={Zap} label="Live Runs" value="42" />
-          <StatCard icon={Users} label="Active Runners" value="39" />
-          <StatCard icon={Timer} label="Avg Runtime" value="1:47" />
-          <StatCard icon={TrendingUp} label="PB Pace Runs" value="7" />
+          <CenterStatCard icon={Zap} label="Live Runs" value="42" />
+          <CenterStatCard icon={Users} label="Active Runners" value="39" />
+          <CenterStatCard icon={Timer} label="Avg Runtime" value="1:47" />
+          <CenterStatCard icon={TrendingUp} label="PB Pace Runs" value="7" />
         </div>
 
         {/* Filters */}
