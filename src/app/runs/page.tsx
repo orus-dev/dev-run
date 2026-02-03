@@ -13,6 +13,7 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 /* ---------------- mock data ---------------- */
 
@@ -92,9 +93,7 @@ export default function LiveRuns() {
             </Badge>
           ))}
 
-          <Badge className="bg-primary/10 text-primary">
-            🔥 PB Pace
-          </Badge>
+          <Badge className="bg-primary/10 text-primary">🔥 PB Pace</Badge>
         </div>
 
         {/* Table */}
@@ -112,8 +111,8 @@ export default function LiveRuns() {
             </TableHeader>
 
             <TableBody>
-              {sortedRuns.map((run) => (
-                <LiveRunRow key={run.id} {...run} />
+              {sortedRuns.map((run, index) => (
+                <LiveRunRow key={run.id} {...run} index={index} />
               ))}
             </TableBody>
           </Table>
@@ -123,15 +122,28 @@ export default function LiveRuns() {
   );
 }
 
-function LiveRunRow({ username, problem, category, time, pace, status }: any) {
+function LiveRunRow({
+  index,
+  username,
+  problem,
+  category,
+  time,
+  pace,
+  status,
+}: any) {
   const pacePositive = pace.startsWith("+");
   const isTop = status === "pb";
 
   return (
     <TableRow
-      className={
-        isTop ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/50"
-      }
+      className={cn(
+        "opacity-0 animate-fade-in",
+        isTop ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-secondary/50",
+      )}
+      style={{
+        animationDelay: `${index * 0.05}s`,
+        animationFillMode: "forwards",
+      }}
     >
       <TableCell className="font-medium pl-5">
         {isTop ? `🔥 ${username}` : username}
