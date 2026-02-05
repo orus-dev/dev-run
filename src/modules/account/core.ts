@@ -66,3 +66,19 @@ export async function getSession(
 
   return [user, profile];
 }
+
+export async function signInWithGitHub(supabase: SupabaseClient) {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: `/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data.url;
+}
