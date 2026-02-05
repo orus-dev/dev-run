@@ -1,9 +1,16 @@
 "use server";
 
+import { createClient } from "@/lib/supabase/server";
+import { getSession, getSessionRedirect } from "../account/core";
 import * as Core from "./core";
 import { Run } from "./types";
+import { redirect } from "next/navigation";
 
 export async function getLiveRuns(): Promise<Run[]> {
+  const supabase = await createClient();
+
+  const _ = await getSession(supabase);
+
   return [
     {
       id: 1,

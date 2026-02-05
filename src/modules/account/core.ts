@@ -4,6 +4,22 @@ import { SupabaseClient, User } from "@supabase/supabase-js";
 import "server-only";
 import { UserProfile } from "../user/types";
 
+export async function signInWithGitHub(supabase: SupabaseClient) {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "github",
+    options: {
+      redirectTo: `/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data.url;
+}
+
 export async function getProfile(
   supabase: SupabaseClient,
   user: User,
@@ -36,10 +52,11 @@ export async function getGithubProfile(
     .from("profiles")
     .insert({
       id: user.id,
-      username: user.user_metadata.login || null,
-      full_name: user.user_metadata.name || null,
+      username: user.user_metadata.user_name || `user_${user.id.slice(0, 6)}`,
       avatar_url: user.user_metadata.avatar_url || null,
-    })
+      bio: "",
+      created_at: new Date(),
+    } satisfies UserProfile)
     .select()
     .single();
 
@@ -52,33 +69,26 @@ export async function getSession(
   supabase: SupabaseClient,
 ): Promise<[User, UserProfile]> {
   const {
-    data: { session },
+    data: { user },
     error: sessionError,
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
 
-  if (sessionError || !session?.user) {
+  if (sessionError || !user) {
     throw new Error("No authenticated user found");
   }
-
-  const user = session.user;
 
   const profile = await getProfile(supabase, user);
 
   return [user, profile];
 }
 
-export async function signInWithGitHub(supabase: SupabaseClient) {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
-    options: {
-      redirectTo: `/auth/callback`,
-    },
-  });
-
-  if (error) {
-    console.error(error);
-    throw error;
+export async function getSessionRedirect(
+  supabase: SupabaseClient,
+  redirect: (s: string) => void,
+): Promise<[User, UserProfile] | undefined> {
+  try {
+    return await getSession(supabase);
+  } catch {
+    redirect("/login");
   }
-
-  return data.url;
 }
