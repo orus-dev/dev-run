@@ -1,7 +1,15 @@
+"use client";
+
 import { Github, Mail } from "lucide-react";
 import { Button } from "../ui/button";
+import { signInWithGitHub } from "@/modules/account/actions";
 
 export default function ContinueWith() {
+  const continueWithGithub = () => {
+    signInWithGitHub();
+  };
+  const continueWithGoogle = () => {};
+
   return (
     <>
       <div className="relative">
@@ -16,11 +24,15 @@ export default function ContinueWith() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 animate-fade-in stagger-4">
-        <Button variant="outline">
+        <Button variant="outline" onClick={continueWithGithub}>
           <Github className="h-4 w-4" />
           GitHub
         </Button>
-        <Button variant="outline" className="animate-fade-in stagger-5">
+        <Button
+          variant="outline"
+          className="animate-fade-in stagger-5"
+          onClick={continueWithGoogle}
+        >
           <Mail className="h-4 w-4" />
           Google
         </Button>
