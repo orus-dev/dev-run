@@ -1,14 +1,17 @@
 "use server";
 
 import * as Core from "./core";
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function signInWithGitHub() {
+export async function signInWithGitHub(origin: string) {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
+    options: {
+      redirectTo: `${origin}/api/auth/callback`,
+    },
   });
 
   if (error) {
@@ -17,6 +20,16 @@ export async function signInWithGitHub() {
   }
 
   return redirect(data.url);
+}
+
+export async function getSession() {
+  const supabase = await createClient();
+
+  try {
+    return await Core.getSession(supabase);
+  } catch {
+    return redirect("/login");
+  }
 }
 
 export async function signOut() {
