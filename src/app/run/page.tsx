@@ -1,13 +1,10 @@
 "use client";
 
-import CodeMirror, { EditorState } from "@uiw/react-codemirror";
 import { Card, CardContent } from "@/components/ui/card";
 import RunTimer, { RunInfo } from "./components/RunTimer";
 import RunChat, { ChatMessage } from "./components/RunChat";
 import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
-import { devRun } from "./components/theme/theme";
-import { javascript } from "@codemirror/lang-javascript";
 import Editor from "./components/Editor";
 
 export default function Run() {
@@ -53,7 +50,7 @@ export default function Run() {
             <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
               <File size={16} /> myfile.js
             </header>
-            <div className="flex-1 pt-3 pb-5">
+            <div className="flex-1 pt-3 pb-5 h-full">
               <Editor />
             </div>
           </div>

@@ -1,13 +1,14 @@
 "use client";
 
-import CodeMirror, { EditorState } from "@uiw/react-codemirror";
-import { devRun } from "./theme/theme";
+import CodeMirror, { EditorState, EditorView } from "@uiw/react-codemirror";
+import { devRun } from "./theme";
 import { javascript } from "@codemirror/lang-javascript";
 import { rust } from "@codemirror/lang-rust";
 import { go } from "@codemirror/lang-go";
 import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
+import { useEffect, useState } from "react";
 
 type Language =
   | "javascript"
@@ -37,12 +38,17 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-export default function Editor() {
-  return (
-    <CodeMirror
-      readOnly
-      className="h-full w-full"
-      value={`// Import the necessary React library features
+type Move = {
+  latency: number;
+  cursor: number;
+  changes: {
+    from: number;
+    to: number;
+    insert: string;
+  };
+};
+
+const code = `// Import the necessary React library features
 import { createRoot } from 'react-dom/client';
 
 // Define a functional component named "App"
@@ -59,7 +65,72 @@ const domNode = document.getElementById('root');
 
 // Create a root and render your component into the DOM
 const root = createRoot(domNode);
-root.render(<App />); `}
+root.render(<App />);`.repeat(3);
+
+// Helper to split text into chunks of ~4 chars
+function chunkText(text: string, size = 4) {
+  const chunks = [];
+  for (let i = 0; i < text.length; i += size) {
+    chunks.push(text.slice(i, i + size));
+  }
+  return chunks;
+}
+
+const chunks = chunkText(code, 4);
+
+const moves: Move[] = chunks.map((chunk, index) => ({
+  latency: 1, // 100ms per chunk
+  cursor: index * 4, // approximate cursor position
+  changes: {
+    from: index * 4,
+    to: index * 4,
+    insert: chunk,
+  },
+}));
+
+export default function Editor() {
+  const [editorView, setEditorView] = useState<EditorView>();
+
+  useEffect(() => {
+    if (!editorView) return;
+
+    let cancelled = false;
+
+    const executeMove = async (move: Move) => {
+      return new Promise<void>((resolve) => {
+        const timeout = setTimeout(() => {
+          if (!editorView || cancelled) return resolve();
+
+          editorView.dispatch({
+            selection: { anchor: move.cursor },
+            scrollIntoView: true,
+            changes: move.changes,
+          });
+
+          resolve();
+        }, move.latency);
+
+        return () => clearTimeout(timeout);
+      });
+    };
+
+    (async () => {
+      for (const move of moves) {
+        if (cancelled) break;
+        await executeMove(move);
+      }
+    })();
+
+    return () => {
+      cancelled = true; // stop future moves
+    };
+  }, [editorView]);
+
+  return (
+    <CodeMirror
+      readOnly
+      className="h-full w-full"
+      value={``}
       extensions={[
         getLanguageExtension("javascript"),
         EditorState.transactionFilter.of((tr) => {
@@ -72,10 +143,7 @@ root.render(<App />); `}
       theme={devRun}
       onCreateEditor={(view) => {
         view.focus();
-        view.dispatch({
-          selection: { anchor: 1 },
-          scrollIntoView: true,
-        });
+        setEditorView(view);
       }}
     />
   );
