@@ -8,6 +8,7 @@ import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
 import { devRun } from "./components/theme/theme";
 import { javascript } from "@codemirror/lang-javascript";
+import Editor from "./components/Editor";
 
 export default function Run() {
   const runInfo: RunInfo = {
@@ -52,47 +53,8 @@ export default function Run() {
             <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
               <File size={16} /> myfile.js
             </header>
-
             <div className="flex-1 pt-3 pb-5">
-              <CodeMirror
-                readOnly
-                className="h-full w-full"
-                value={`// Import the necessary React library features
-import { createRoot } from 'react-dom/client';
-
-// Define a functional component named "App"
-// Component names must start with a capital letter
-function App() {
-  // Components return JSX markup
-  return (
-    <h1>Hello, world!</h1>
-  );
-}
-
-// Target a DOM element in your HTML (e.g., <div id="root"></div>)
-const domNode = document.getElementById('root');
-
-// Create a root and render your component into the DOM
-const root = createRoot(domNode);
-root.render(<App />); `}
-                extensions={[
-                  javascript(),
-                  EditorState.transactionFilter.of((tr) => {
-                    if (tr.selection && tr.isUserEvent("select")) {
-                      return [];
-                    }
-                    return tr;
-                  }),
-                ]}
-                theme={devRun}
-                onCreateEditor={(view) => {
-                  view.focus();
-                  view.dispatch({
-                    selection: { anchor: 1 },
-                    scrollIntoView: true,
-                  });
-                }}
-              />
+              <Editor />
             </div>
           </div>
         </CardContent>
