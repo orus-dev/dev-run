@@ -30,13 +30,13 @@ import {
   getGlobalLeaderboard,
   getWeeklyLeaderboard,
 } from "@/modules/leaderboard/actions";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function Leaderboards() {
   const [global, globalLoaded, globalError] = useAction(getGlobalLeaderboard);
   const [weekly, weeklyLoaded, weeklyError] = useAction(getWeeklyLeaderboard);
 
   const [activeTab, setActiveTab] = useState<"global" | "weekly">("global");
-  const categories = ["Any%", "100%", "Easy Only", "No DP", "Blind"];
   const data = (activeTab === "global" ? global : weekly) || [];
 
   return (
@@ -97,15 +97,23 @@ export default function Leaderboards() {
           </Tabs>
 
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat, i) => (
-              <Badge
-                key={cat}
-                variant={i === 0 ? "default" : "outline"}
-                className="cursor-pointer"
-              >
-                {cat}
-              </Badge>
-            ))}
+            <ToggleGroup variant="outline" type="single" defaultValue="any">
+              <ToggleGroupItem value="any" aria-label="any%">
+                any%
+              </ToggleGroupItem>
+              <ToggleGroupItem value="100" aria-label="100%">
+                100%
+              </ToggleGroupItem>
+            </ToggleGroup>
+
+            <ToggleGroup variant="outline" type="single">
+              <ToggleGroupItem value="true" aria-label="Assisted">
+                Assisted
+              </ToggleGroupItem>
+              <ToggleGroupItem value="false" aria-label="Unassisted">
+                Unassisted
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
         </div>
 
