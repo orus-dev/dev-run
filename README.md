@@ -1,7 +1,7 @@
 <h1 align="center">
   <br>
   <a href="https://dev-run.netlify.app/">
-    <img src="public/dev-run-icon.svg" alt="DevRun" width="270">
+    <img src="public/dev-run-icon.svg" alt="DevRun" width="130">
   </a>
   <br>
   DevRun
