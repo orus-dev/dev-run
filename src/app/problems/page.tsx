@@ -16,7 +16,6 @@ export default function Problems() {
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const categories = ["All", "Arrays", "Trees", "Graphs", "DP", "Strings"];
   const difficulties = ["All", "Easy", "Medium", "Hard"];
 
   return (
@@ -40,28 +39,24 @@ export default function Problems() {
 
           {/* Category Filter */}
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat, i) => (
-              <Badge
-                key={cat}
-                variant={i === 0 ? "default" : "secondary"}
-                className="cursor-pointer"
-              >
-                {cat}
-              </Badge>
-            ))}
+            <ToggleGroup variant="outline" type="multiple">
+              {["Arrays", "Trees", "Graphs", "DP", "Strings"].map((f) => (
+                <ToggleGroupItem value={f.toLowerCase()} aria-label={f} key={f}>
+                  {f}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
 
           {/* Difficulty Filter */}
-          <div className="flex gap-2">
-            {difficulties.map((diff, i) => (
-              <Button
-                key={diff}
-                variant={i === 0 ? "outline" : "ghost"}
-                size="sm"
-              >
-                {diff}
-              </Button>
-            ))}
+          <div className="flex flex-wrap gap-2">
+            <ToggleGroup variant="outline" type="multiple">
+              {["Easy", "Medium", "Hard"].map((f) => (
+                <ToggleGroupItem value={f.toLowerCase()} aria-label={f} key={f}>
+                  {f}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
           </div>
 
           {/* View Toggle */}
