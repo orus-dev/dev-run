@@ -3,8 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSession, getSessionRedirect } from "../account/core";
 import * as Core from "./core";
-import { Run } from "./types";
-import { redirect } from "next/navigation";
+import { LiveRun, Run } from "./types";
 
 export async function getLiveRuns(): Promise<Run[]> {
   const supabase = await createClient();
@@ -51,6 +50,16 @@ export async function getLiveRuns(): Promise<Run[]> {
   ];
 }
 
+export async function getLiveRun(): Promise<LiveRun> {
+  return {
+    username: "selimaj",
+    start: new Date().getTime(),
+    problem: "solve",
+    category: "any%",
+    runsCount: 0,
+  };
+}
+
 export async function getLiveRunMoves() {
   const code = `// Import the necessary React library features
 import { createRoot } from 'react-dom/client';
@@ -77,7 +86,7 @@ root.render(<App />);`.repeat(3);
   }
 
   return chunks.map((chunk, index) => ({
-    latency: 1, // 100ms per chunk
+    latency: 120, // 100ms per chunk
     cursor: index * 4, // approximate cursor position
     changes: {
       from: index * 4,

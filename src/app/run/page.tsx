@@ -1,20 +1,16 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import RunTimer, { RunInfo } from "./components/RunTimer";
+import RunTimer from "./components/RunTimer";
 import RunChat, { ChatMessage } from "./components/RunChat";
 import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
 import Editor from "./components/Editor";
+import useAction from "@/hook/use-action";
+import { getLiveRun } from "@/modules/live-run/actions";
 
 export default function Run() {
-  const runInfo: RunInfo = {
-    category: "any%",
-    problems: 5,
-    pbTime: "4:35",
-    worldRecord: "3:58",
-    currentAttempt: 47,
-  };
+  const [runInfo] = useAction(getLiveRun);
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
@@ -59,7 +55,8 @@ export default function Run() {
 
       {/* Timer & Chat */}
       <div className="flex flex-col gap-6 h-full w-sm">
-        <RunTimer runInfo={runInfo} />
+        {runInfo && <RunTimer runInfo={runInfo} />}
+        {/* {runInfo && <ProblemCard {...runInfo.problem} />} */}
         <RunChat chatMessages={chatMessages} />
       </div>
     </div>
