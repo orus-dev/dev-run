@@ -86,12 +86,12 @@ export default function Leaderboards() {
           >
             <TabsList>
               <TabsTrigger value="global">
-                <Globe className="mr-2 h-4 w-4" />
+                <Globe className="h-4 w-4" />
                 Global
               </TabsTrigger>
               <TabsTrigger value="weekly">
-                <Calendar className="mr-2 h-4 w-4" />
-                Weekly
+                <Calendar className="h-4 w-4" />
+                This week
               </TabsTrigger>
             </TabsList>
           </Tabs>
