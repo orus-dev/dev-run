@@ -18,6 +18,7 @@ import LiveRunRow from "./components/LiveRunNow";
 import StatCard from "@/components/app/StatCard";
 import useAction from "@/hook/use-action";
 import { getLiveRuns } from "@/modules/live-run/actions";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function LiveRuns() {
   const [liveRuns, liveRunsLoaded, liveRunsError] = useAction(getLiveRuns);
@@ -55,13 +56,14 @@ export default function LiveRuns() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2">
-          {["Any%", "100%", "Easy", "Hard"].map((cat) => (
-            <Badge key={cat} variant="outline" className="cursor-pointer">
-              {cat}
-            </Badge>
-          ))}
-
-          <Badge className="bg-primary/10 text-primary">🔥 PB Pace</Badge>
+          <ToggleGroup variant="outline" type="single" defaultValue="any">
+            <ToggleGroupItem value="any" aria-label="any%">
+              any%
+            </ToggleGroupItem>
+            <ToggleGroupItem value="100" aria-label="100%">
+              100%
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         {/* Table */}
