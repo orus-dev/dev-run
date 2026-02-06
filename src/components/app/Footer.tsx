@@ -17,7 +17,7 @@ const Footer = () => {
             <div className="flex items-center gap-2 mb-4">
               <img
                 alt="Logo"
-                src="/dev-run.svg"
+                src="/dev-run-icon.svg"
                 className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110"
               />
               <span className="text-lg font-bold">

@@ -36,7 +36,7 @@ const Navbar = () => {
             <div className="relative">
               <img
                 alt="Logo"
-                src="/dev-run.svg"
+                src="/dev-run-icon.svg"
                 className="h-8 w-8 text-primary transition-transform duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-primary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
