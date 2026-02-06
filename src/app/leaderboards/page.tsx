@@ -114,16 +114,28 @@ export default function Leaderboards() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-5">Rank</TableHead>
-                <TableHead>Runner</TableHead>
-                <TableHead>PB</TableHead>
-                <TableHead>Runs</TableHead>
-                <TableHead className="pr-5">Category</TableHead>
+                <TableHead className="w-16">
+                  <p className="flex justify-center">Rank</p>
+                </TableHead>
+                <TableHead className="w-52">
+                  <p className="flex justify-center">Runner</p>
+                </TableHead>
+                <TableHead className="w-24">
+                  <p className="flex justify-center">Time</p>
+                </TableHead>
+                <TableHead className="w-16">
+                  <p className="flex justify-center">Category</p>
+                </TableHead>
+                <TableHead className="w-24">
+                  <p className="flex justify-center">Assisted</p>
+                </TableHead>
+                <TableHead className="w-16">Runs</TableHead>
+                <TableHead>Problem</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((entry, i) => (
-                <LeaderboardRow key={entry.username} {...entry} index={i} />
+                <LeaderboardRow key={entry.username} index={i} run={entry} />
               ))}
             </TableBody>
           </Table>
