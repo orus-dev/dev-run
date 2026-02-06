@@ -24,11 +24,7 @@ export default function LiveRuns() {
   const [liveRuns, liveRunsLoaded, liveRunsError] = useAction(getLiveRuns);
 
   // Sort top runners (status === 'pb') to the top
-  const sortedRuns = [...(liveRuns || [])].sort((a, b) => {
-    if (a.status === "pb" && b.status !== "pb") return -1;
-    if (a.status !== "pb" && b.status === "pb") return 1;
-    return 0;
-  });
+  const sortedRuns = [...(liveRuns || [])];
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -82,7 +78,7 @@ export default function LiveRuns() {
 
             <TableBody>
               {sortedRuns.map((run, index) => (
-                <LiveRunRow key={run.id} {...run} index={index} />
+                <LiveRunRow key={run.id} index={index} run={run} />
               ))}
             </TableBody>
           </Table>

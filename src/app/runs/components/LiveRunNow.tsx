@@ -5,18 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { LiveRun } from "@/modules/live-run/types";
+import formatTime from "@/lib/time-format";
 
 export default function LiveRunRow({
   index,
-  username,
-  problem,
-  category,
-  time,
-  pace,
-  status,
-}: any) {
-  const pacePositive = pace.startsWith("+");
-  const isTop = status === "pb";
+  run,
+}: {
+  index: number;
+  run: LiveRun;
+}) {
+  const now = new Date().getTime() + 1000;
+  const isTop = false;
 
   return (
     <TableRow
@@ -30,14 +30,14 @@ export default function LiveRunRow({
       }}
     >
       <TableCell className="font-medium pl-5">
-        {isTop ? `🔥 ${username}` : username}
+        {isTop ? `🔥 ${run.username}` : run.username}
       </TableCell>
 
       <TableCell>
         <div className="flex flex-col gap-1">
-          <span>{problem}</span>
+          <span>{run.problem}</span>
           <Badge variant="outline" className="w-fit text-xs">
-            {category}
+            {run.category}
           </Badge>
         </div>
       </TableCell>
@@ -45,18 +45,18 @@ export default function LiveRunRow({
       <TableCell
         className={`font-mono ${isTop ? "text-primary font-bold" : ""}`}
       >
-        {time}
+        {formatTime(now - run.start, false)}
       </TableCell>
 
       <TableCell>
         <Badge
           className={
-            pacePositive
+            false
               ? "bg-red-500/10 text-red-400"
               : "bg-green-500/10 text-green-400"
           }
         >
-          {pace}
+          0
         </Badge>
       </TableCell>
 

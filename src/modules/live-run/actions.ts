@@ -3,55 +3,52 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSession, getSessionRedirect } from "../account/core";
 import * as Core from "./core";
-import { LiveRun, Run } from "./types";
+import { LiveRun } from "./types";
 
-export async function getLiveRuns(): Promise<Run[]> {
+export async function getLiveRuns(): Promise<LiveRun[]> {
   const supabase = await createClient();
 
   const _ = await getSession(supabase);
 
   return [
     {
-      id: 1,
+      id: "1",
       username: "speedmaster_x",
       problem: "Two Sum Dash",
-      category: "Any%",
-      time: "1:52.34",
-      pace: "-0:03",
-      status: "pb",
+      category: "any%",
+      runsCount: 1,
+      start: new Date().getTime(),
     },
     {
-      id: 2,
+      id: "2",
       username: "algo_ninja",
       problem: "Binary Sprint",
-      category: "Any%",
-      time: "2:04.11",
-      pace: "+0:05",
-      status: "normal",
+      category: "any%",
+      runsCount: 1,
+      start: new Date().getTime(),
     },
     {
-      id: 3,
+      id: "3",
       username: "stackattack",
       problem: "String Scramble",
-      category: "Easy",
-      time: "0:48.92",
-      pace: "-0:01",
-      status: "pb",
+      category: "any%",
+      runsCount: 1,
+      start: new Date().getTime(),
     },
     {
-      id: 4,
+      id: "4",
       username: "reset_king",
       problem: "Linked List Rush",
-      category: "Any%",
-      time: "1:31.77",
-      pace: "+0:12",
-      status: "danger",
+      category: "any%",
+      runsCount: 1,
+      start: new Date().getTime(),
     },
   ];
 }
 
 export async function getLiveRun(): Promise<LiveRun> {
   return {
+    id: "0",
     username: "selimaj",
     start: new Date().getTime(),
     problem: "solve",

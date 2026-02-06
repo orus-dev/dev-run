@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import formatTime from "@/lib/time-format";
 import { LiveRun } from "@/modules/live-run/types";
 import { useEffect, useState } from "react";
 
@@ -7,21 +8,7 @@ export default function RunTimer({ runInfo }: { runInfo: LiveRun }) {
 
   useEffect(() => {
     // Update function calculates elapsed time
-    const updateTime = () => {
-      const elapsedMs = Date.now() - runInfo.start;
-
-      const totalSeconds = elapsedMs / 1000;
-      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
-      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(
-        2,
-        "0",
-      );
-      const seconds = (totalSeconds % 60).toFixed(2);
-
-      setTime(
-        `${totalSeconds / 3600 >= 1 ? hours + ":" : ""}${minutes}:${seconds}`,
-      );
-    };
+    const updateTime = () => setTime(formatTime(Date.now() - runInfo.start));
 
     // Update immediately and then every second
     updateTime();
