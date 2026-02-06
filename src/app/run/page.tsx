@@ -1,14 +1,13 @@
 "use client";
 
 import CodeMirror, { EditorState } from "@uiw/react-codemirror";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-
 import { Card, CardContent } from "@/components/ui/card";
 import RunTimer, { RunInfo } from "./components/RunTimer";
 import RunChat, { ChatMessage } from "./components/RunChat";
-import { useState } from "react";
 import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
+import { devRun } from "./components/theme/theme";
+import { javascript } from "@codemirror/lang-javascript";
 
 export default function Run() {
   const runInfo: RunInfo = {
@@ -58,8 +57,26 @@ export default function Run() {
               <CodeMirror
                 readOnly
                 className="h-full w-full"
-                value="yo"
+                value={`// Import the necessary React library features
+import { createRoot } from 'react-dom/client';
+
+// Define a functional component named "App"
+// Component names must start with a capital letter
+function App() {
+  // Components return JSX markup
+  return (
+    <h1>Hello, world!</h1>
+  );
+}
+
+// Target a DOM element in your HTML (e.g., <div id="root"></div>)
+const domNode = document.getElementById('root');
+
+// Create a root and render your component into the DOM
+const root = createRoot(domNode);
+root.render(<App />); `}
                 extensions={[
+                  javascript(),
                   EditorState.transactionFilter.of((tr) => {
                     if (tr.selection && tr.isUserEvent("select")) {
                       return [];
@@ -67,7 +84,7 @@ export default function Run() {
                     return tr;
                   }),
                 ]}
-                theme={vscodeDark}
+                theme={devRun}
                 onCreateEditor={(view) => {
                   view.focus();
                   view.dispatch({
