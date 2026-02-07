@@ -9,8 +9,9 @@ import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useState } from "react";
-import useAction from "@/hook/use-action";
+import useAction, { useActionOnce } from "@/hook/use-action";
 import { getLiveRunMoves } from "@/modules/live-run/actions";
+import { LiveRun } from "@/modules/live-run/types";
 
 type Language =
   | "javascript"
@@ -50,9 +51,9 @@ type Move = {
   };
 };
 
-export default function Editor() {
+export default function Editor({ run }: { run: LiveRun | null }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [moves] = useAction<Move[]>(getLiveRunMoves);
+  const [moves] = useActionOnce<Move[]>(getLiveRunMoves, [run]);
 
   useEffect(() => {
     if (!editorView || !moves) return;

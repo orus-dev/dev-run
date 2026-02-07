@@ -18,6 +18,26 @@ export default function useAction<T>(
   return [value, loaded, error];
 }
 
+export function useActionOnce<T>(
+  action: () => Promise<T>,
+  dependencies: any[] = [],
+): [T | null, boolean, Error | null] {
+  const [value, setValue] = useState<T | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (loaded) return;
+
+    action()
+      .then(setValue)
+      .catch(setError)
+      .finally(() => setLoaded(true));
+  }, dependencies);
+
+  return [value, loaded, error];
+}
+
 export function useActionInterval<T>(
   action: () => Promise<T>,
   interval: number,

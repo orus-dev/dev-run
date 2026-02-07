@@ -82,7 +82,7 @@ export default function Run() {
                 <File size={16} /> myfile.js
               </header>
               <div className="flex-1 pt-3 pb-4 md:pb-5 w-full h-full">
-                <Editor />
+                <Editor run={run} />
               </div>
             </div>
           </CardContent>
