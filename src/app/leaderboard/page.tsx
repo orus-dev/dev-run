@@ -46,7 +46,7 @@ export default function Leaderboard() {
           </p>
         </div>
 
-        {/* Tabs + Filters */}
+        {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 justify-between">
           <Tabs
             value={activeTab}
