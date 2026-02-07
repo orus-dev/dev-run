@@ -27,6 +27,14 @@ export async function addRun(run: LiveRun) {
   liveRuns.push(run);
 }
 
-export async function addLiveRunMove(id: string) {
-  if (!liveRuns.find((r) => r.id === id)) throw "Invalid run";
+export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
+  if (!liveRunMoves[id]) throw "Invalid run";
+
+  // Add the moves immediately
+  liveRunMoves[id] = [...liveRunMoves[id], ...moves];
+
+  // After 3 seconds, remove only the moves we just added
+  setTimeout(() => {
+    liveRunMoves[id] = liveRunMoves[id].filter((move) => !moves.includes(move));
+  }, 3000);
 }
