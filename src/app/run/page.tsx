@@ -28,12 +28,18 @@ export default function Run() {
             <ProfileCard user={{ username: "selimaj", rank: 1 }} />
           </div>
 
-          <div className="flex-1 animate-fade-in opacity-0 duration-1000">
+          <div className="flex-1 animate-fade-in opacity-0 duration-1000 stagger-2">
             {runInfo && <RunTimer runInfo={runInfo} />}
           </div>
 
           <div className="flex-1">
-            <ProblemCard name="Idk" difficulty="hard" tags={[]} attempts={0} />
+            <ProblemCard
+              name="Idk"
+              difficulty="hard"
+              tags={[]}
+              attempts={0}
+              index={4}
+            />
           </div>
         </div>
 

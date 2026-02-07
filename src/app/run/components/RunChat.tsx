@@ -30,7 +30,11 @@ export default function RunChat({
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-2">
           {chatMessages.map((msg, i) => (
-            <div key={i} className="rounded-lg bg-secondary/50 p-2 text-sm">
+            <div
+              key={i}
+              className="rounded-lg bg-secondary/50 p-2 text-sm opacity-0 animate-fade-in"
+              style={{ animationDelay: `${i * 100}ms` }} // stagger by 100ms
+            >
               <span className="font-semibold text-foreground">{msg.user}</span>:{" "}
               <span className="text-muted-foreground">{msg.message}</span>
               <span className="ml-2 text-xs text-muted-foreground">

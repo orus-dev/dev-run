@@ -12,9 +12,14 @@ type TreeNode = {
 interface FileTreeProps {
   tree: TreeNode;
   level?: number; // for indentation
+  delay?: number; // stagger delay in ms
 }
 
-export const FileTree: React.FC<FileTreeProps> = ({ tree, level = 0 }) => {
+export const FileTree: React.FC<FileTreeProps> = ({
+  tree,
+  level = 0,
+  delay = 0,
+}) => {
   const [expanded, setExpanded] = useState(
     tree.type !== "directory" || level === 0 ? true : false,
   );
@@ -32,11 +37,9 @@ export const FileTree: React.FC<FileTreeProps> = ({ tree, level = 0 }) => {
         onClick={toggleExpand}
         style={{
           paddingLeft: level * 20,
-          display: "flex",
-          alignItems: "center",
-          cursor: tree.type === "directory" ? "pointer" : "default",
-          userSelect: "none",
+          animationDelay: `${delay}ms`,
         }}
+        className="flex items-center cursor-pointer select-none animate-fade-in opacity-0"
       >
         {tree.type === "directory" ? (
           expanded ? (
@@ -52,8 +55,14 @@ export const FileTree: React.FC<FileTreeProps> = ({ tree, level = 0 }) => {
 
       {/* Children */}
       {expanded &&
-        tree.children?.map((child) => (
-          <FileTree key={child.uri} tree={child} level={level + 1} />
+        tree.children?.map((child, index) => (
+          <FileTree
+            key={child.uri}
+            tree={child}
+            level={level + 1}
+            // stagger each child by 100ms
+            delay={delay + (index + 1) * 100}
+          />
         ))}
     </div>
   );
