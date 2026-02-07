@@ -9,7 +9,7 @@ import Editor from "./components/Editor";
 import useAction from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
 import ProblemCard from "../problems/components/ProblemCard";
-import ProfileCard from "@/components/app/ProfileCard";
+import ProfileCard from "./components/ProfileCard";
 
 export default function Run() {
   const [runInfo] = useAction(getLiveRun);
@@ -28,13 +28,13 @@ export default function Run() {
         pt-20 sm:pt-24
         pb-6 sm:pb-12
         flex flex-col lg:flex-row
-        gap-6 lg:gap-8
+        gap-5
       "
     >
       {/* Main column */}
       <div className="h-full w-full flex flex-col gap-4">
         {/* Top cards */}
-        <div className="w-full flex flex-col md:flex-row gap-4 md:gap-5">
+        <div className="w-full flex flex-wrap gap-4 md:gap-5">
           <div className="flex-1 animate-fade-in opacity-0">
             <ProfileCard user={{ username: "selimaj", rank: 1 }} />
           </div>
@@ -80,7 +80,7 @@ export default function Run() {
             </div>
 
             {/* Code */}
-            <div className="flex-1 w-full pl-0 md:pl-5 flex flex-col">
+            <div className="flex-1 w-full h-svh md:h-full pl-0 md:pl-5 flex flex-col">
               <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                 <File size={16} /> myfile.js
               </header>
