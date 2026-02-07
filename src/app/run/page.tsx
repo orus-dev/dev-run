@@ -80,7 +80,7 @@ export default function Run() {
             </div>
 
             {/* Code */}
-            <div className="flex-1 w-full h-svh md:h-full pl-0 md:pl-5 flex flex-col">
+            <div className="flex-1 w-full max-h-svh md:max-h-full h-full pl-0 md:pl-5 flex flex-col">
               <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
                 <File size={16} /> myfile.js
               </header>
