@@ -34,7 +34,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              {["Problems", "Leaderboards", "Categories", "Rules"].map(
+              {["Problems", "Leaderboard", "Categories", "Rules"].map(
                 (link) => (
                   <li key={link}>
                     <a

@@ -84,10 +84,10 @@ export default function Landing() {
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link href="/leaderboards">
+              <Link href="/leaderboard">
                 <Button variant="hero">
                   <Trophy className="h-5 w-5" />
-                  View Leaderboards
+                  View Leaderboard
                 </Button>
               </Link>
             </div>

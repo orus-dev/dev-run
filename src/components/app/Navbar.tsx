@@ -13,9 +13,9 @@ const navs = [
     name: "Problems",
   },
   {
-    link: "/leaderboards",
+    link: "/leaderboard",
     icon: Trophy,
-    name: "Leaderboards",
+    name: "Leaderboard",
   },
   {
     link: "/runs",
