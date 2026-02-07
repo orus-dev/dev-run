@@ -54,7 +54,7 @@ export async function getLiveRun(): Promise<LiveRun> {
   return {
     id: "0",
     username: "selimaj",
-    start: new Date().getTime(),
+    start: 1770497350654,
     views: 230,
     problem: "solve",
     category: "any%",

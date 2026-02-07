@@ -6,13 +6,13 @@ import RunChat, { ChatMessage } from "./components/RunChat";
 import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
 import Editor from "./components/Editor";
-import useAction from "@/hook/use-action";
+import useAction, { useActionInterval } from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
 import ProblemCard from "../problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
 
 export default function Run() {
-  const [runInfo] = useAction(getLiveRun);
+  const [runInfo] = useActionInterval(getLiveRun, 1000);
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
