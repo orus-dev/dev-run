@@ -40,7 +40,7 @@ export default function Run() {
           </div>
 
           <div className="flex-1 animate-fade-in opacity-0 stagger-2">
-            {runInfo && <RunTimer runInfo={runInfo} />}
+            {runInfo && <RunTimer run={runInfo} />}
           </div>
 
           <div className="flex-2">
