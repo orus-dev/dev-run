@@ -1,23 +1,27 @@
 import { Card, CardContent } from "@/components/ui/card";
+import formatTime from "@/lib/time-format";
+import { LiveRun } from "@/modules/live-run/types";
+import { useEffect, useState } from "react";
 
-export type RunInfo = {
-  category: "any%" | "100%";
-  problems: number;
-  currentAttempt: number;
-  pbTime: string;
-  worldRecord: string;
-};
+export default function RunTimer({ runInfo }: { runInfo: LiveRun }) {
+  const [time, setTime] = useState("00:00:00");
 
-export default function RunTimer({ runInfo }: { runInfo: RunInfo }) {
+  useEffect(() => {
+    // Update function calculates elapsed time
+    const updateTime = () => setTime(formatTime(Date.now() - runInfo.start));
+
+    // Update immediately and then every second
+    updateTime();
+    const interval = setInterval(updateTime, 50);
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, [runInfo.start]);
+
   return (
-    <Card className="relative text-center overflow-hidden">
+    <Card className="relative text-center overflow-hidden h-full">
       <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
-      <CardContent className="relative">
-        <p className="timer-display text-primary text-4xl font-bold">1:52.34</p>
-        <p className="mt-2 font-mono text-sm text-muted-foreground">
-          PB: {runInfo.pbTime} | Diff:{" "}
-          <span className="text-red-400">+0:12</span>
-        </p>
+      <CardContent className="relative flex justify-center items-center h-full">
+        <p className="timer-display text-primary text-4xl font-bold">{time}</p>
       </CardContent>
     </Card>
   );

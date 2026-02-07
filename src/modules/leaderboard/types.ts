@@ -5,5 +5,7 @@ export interface LeaderboardRank {
   username: string;
   pb: string;
   runsCount: number;
-  category: string;
+  problem: string;
+  category: "any%" | "100%";
+  assisted: boolean;
 }

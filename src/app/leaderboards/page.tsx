@@ -30,13 +30,13 @@ import {
   getGlobalLeaderboard,
   getWeeklyLeaderboard,
 } from "@/modules/leaderboard/actions";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function Leaderboards() {
   const [global, globalLoaded, globalError] = useAction(getGlobalLeaderboard);
   const [weekly, weeklyLoaded, weeklyError] = useAction(getWeeklyLeaderboard);
 
   const [activeTab, setActiveTab] = useState<"global" | "weekly">("global");
-  const categories = ["Any%", "100%", "Easy Only", "No DP", "Blind"];
   const data = (activeTab === "global" ? global : weekly) || [];
 
   return (
@@ -86,26 +86,34 @@ export default function Leaderboards() {
           >
             <TabsList>
               <TabsTrigger value="global">
-                <Globe className="mr-2 h-4 w-4" />
+                <Globe className="h-4 w-4" />
                 Global
               </TabsTrigger>
               <TabsTrigger value="weekly">
-                <Calendar className="mr-2 h-4 w-4" />
-                Weekly
+                <Calendar className="h-4 w-4" />
+                This week
               </TabsTrigger>
             </TabsList>
           </Tabs>
 
           <div className="flex flex-wrap gap-2">
-            {categories.map((cat, i) => (
-              <Badge
-                key={cat}
-                variant={i === 0 ? "default" : "outline"}
-                className="cursor-pointer"
-              >
-                {cat}
-              </Badge>
-            ))}
+            <ToggleGroup variant="outline" type="single" defaultValue="any">
+              <ToggleGroupItem value="any" aria-label="any%">
+                any%
+              </ToggleGroupItem>
+              <ToggleGroupItem value="100" aria-label="100%">
+                100%
+              </ToggleGroupItem>
+            </ToggleGroup>
+
+            <ToggleGroup variant="outline" type="single">
+              <ToggleGroupItem value="true" aria-label="Assisted">
+                Assisted
+              </ToggleGroupItem>
+              <ToggleGroupItem value="false" aria-label="Unassisted">
+                Unassisted
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
         </div>
 
@@ -114,16 +122,28 @@ export default function Leaderboards() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-5">Rank</TableHead>
-                <TableHead>Runner</TableHead>
-                <TableHead>PB</TableHead>
-                <TableHead>Runs</TableHead>
-                <TableHead className="pr-5">Category</TableHead>
+                <TableHead className="w-16">
+                  <p className="flex justify-center">Rank</p>
+                </TableHead>
+                <TableHead className="w-52">
+                  <p className="flex justify-center">Runner</p>
+                </TableHead>
+                <TableHead className="w-24">
+                  <p className="flex justify-center">Time</p>
+                </TableHead>
+                <TableHead className="w-16">
+                  <p className="flex justify-center">Category</p>
+                </TableHead>
+                <TableHead className="w-24">
+                  <p className="flex justify-center">Assisted</p>
+                </TableHead>
+                <TableHead className="w-16">Runs</TableHead>
+                <TableHead>Problem</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((entry, i) => (
-                <LeaderboardRow key={entry.username} {...entry} index={i} />
+                <LeaderboardRow key={entry.username} index={i} run={entry} />
               ))}
             </TableBody>
           </Table>

@@ -1,9 +1,8 @@
-export interface Run {
-  id: number;
+export interface LiveRun {
+  id: string;
   username: string;
+  start: number;
+  runsCount: number;
   problem: string;
-  category: string;
-  time: string;
-  pace: string;
-  status: string;
+  category: "any%" | "100%";
 }
