@@ -1,16 +1,12 @@
 "use client";
 
-import { Zap, Users, Timer, TrendingUp, Eye } from "lucide-react";
-
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableHead,
   TableHeader,
   TableRow,
-  TableCell,
 } from "@/components/ui/table";
 import LiveRunRow from "./components/LiveRunRow";
 import useAction from "@/hook/use-action";
@@ -18,7 +14,7 @@ import { getLiveRuns } from "@/modules/live-run/actions";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function LiveRuns() {
-  const [liveRuns, liveRunsLoaded, liveRunsError] = useAction(getLiveRuns);
+  const [liveRuns] = useAction(getLiveRuns);
 
   // Sort top runners (status === 'pb') to the top
   const sortedRuns = [...(liveRuns || [])];
@@ -53,10 +49,9 @@ export default function LiveRuns() {
               <TableRow>
                 <TableHead className="pl-5">Runner</TableHead>
                 <TableHead>Problem</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Views</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="pr-5" />
+                <TableHead className="w-20">Time</TableHead>
+                <TableHead className="w-20">Views</TableHead>
+                <TableHead className="pr-5">Category</TableHead>
               </TableRow>
             </TableHeader>
 

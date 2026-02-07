@@ -1,8 +1,6 @@
 "use client";
 
-import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { LiveRun } from "@/modules/live-run/types";
@@ -29,48 +27,26 @@ export default function LiveRunRow({
         animationFillMode: "forwards",
       }}
     >
-      <TableCell className="font-medium pl-5">
+      {/* Runner */}
+      <TableCell className="font-medium pl-5 py-5">
         {isTop ? `🔥 ${run.username}` : run.username}
       </TableCell>
 
-      <TableCell>
-        <div className="flex flex-col gap-1">
-          <span>{run.problem}</span>
-          <Badge variant="outline" className="w-fit text-xs">
-            {run.category}
-          </Badge>
-        </div>
-      </TableCell>
+      {/* Problem + Category */}
+      <TableCell>{run.problem}</TableCell>
 
+      {/* Runtime */}
       <TableCell
         className={`font-mono ${isTop ? "text-primary font-bold" : ""}`}
       >
         {formatTime(now - run.start, false)}
       </TableCell>
 
+      {/* Views */}
       <TableCell>{isTop ? <Badge>{run.views}</Badge> : run.views}</TableCell>
 
-      <TableCell>
-        <div className="flex items-center gap-2 text-sm">
-          <span
-            className={`h-2 w-2 rounded-full ${
-              status === "pb"
-                ? "bg-green-500"
-                : status === "danger"
-                  ? "bg-red-500"
-                  : "bg-emerald-400"
-            }`}
-          />
-          Live
-        </div>
-      </TableCell>
-
-      <TableCell className="text-right pr-5">
-        <Button size="sm" variant={isTop ? "default" : "ghost"}>
-          <Eye className="h-4 w-4 mr-1" />
-          Watch
-        </Button>
-      </TableCell>
+      {/* Live status with category color */}
+      <TableCell>{run.category}</TableCell>
     </TableRow>
   );
 }
