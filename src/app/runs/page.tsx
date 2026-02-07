@@ -32,11 +32,11 @@ export default function LiveRuns() {
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2">
-          <ToggleGroup variant="outline" type="single" defaultValue="any">
-            <ToggleGroupItem value="any" aria-label="any%">
+          <ToggleGroup variant="outline" type="single">
+            <ToggleGroupItem value="any%" aria-label="any%">
               any%
             </ToggleGroupItem>
-            <ToggleGroupItem value="100" aria-label="100%">
+            <ToggleGroupItem value="100%" aria-label="100%">
               100%
             </ToggleGroupItem>
           </ToggleGroup>
