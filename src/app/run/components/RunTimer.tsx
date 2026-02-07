@@ -20,8 +20,9 @@ export default function RunTimer({ runInfo }: { runInfo: LiveRun }) {
   return (
     <Card className="relative text-center overflow-hidden h-full">
       <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
-      <CardContent className="relative flex justify-center items-center h-full">
-        <p className="timer-display text-primary text-4xl font-bold">{time}</p>
+      <CardContent className="relative flex flex-col justify-center items-center h-full">
+        <p className="timer-display text-primary text-3xl font-bold">{time}</p>
+        <p className="text-muted-foreground">{runInfo.category}</p>
       </CardContent>
     </Card>
   );

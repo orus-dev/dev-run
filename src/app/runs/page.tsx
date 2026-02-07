@@ -14,7 +14,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import LiveRunRow from "./components/LiveRunNow";
+import LiveRunRow from "./components/LiveRunRow";
 import StatCard from "@/components/app/StatCard";
 import useAction from "@/hook/use-action";
 import { getLiveRuns } from "@/modules/live-run/actions";

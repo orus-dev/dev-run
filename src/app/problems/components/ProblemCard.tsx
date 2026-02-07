@@ -1,23 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Clock, Zap, Users } from "lucide-react";
-
-interface ProblemCardProps {
-  name: string;
-  difficulty: "easy" | "medium" | "hard";
-  tags: string[];
-  bestTime?: string;
-  attempts: number;
-  index?: number;
-}
+import { cn } from "@/lib/utils";
+import { Problem } from "@/modules/problems/types";
+import { Clock, Zap, Users, Code } from "lucide-react";
 
 const ProblemCard = ({
-  name,
-  difficulty,
-  tags,
-  bestTime,
-  attempts,
+  problem,
   index = 0,
-}: ProblemCardProps) => {
+  bestTime,
+  attempts = 0,
+}: {
+  problem: Problem;
+  index?: number;
+  bestTime?: string;
+  attempts?: number;
+}) => {
   const difficultyStyles = {
     easy: "diff-easy",
     medium: "diff-medium",
@@ -46,32 +42,19 @@ const ProblemCard = ({
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-            {name}
+            {problem.title}
           </h3>
           <span
-            className={`px-2 py-1 rounded-md text-xs font-medium ${difficultyStyles[difficulty]}`}
+            className={`px-2 py-1 rounded-md text-xs font-medium ${
+              difficultyStyles[problem.difficulty]
+            }`}
           >
-            {difficultyLabels[difficulty]}
+            {difficultyLabels[problem.difficulty]}
           </span>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 rounded-md bg-secondary text-muted-foreground text-xs"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Stats + Action */}
-        <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
+        {/* Tags / Meta */}
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground w-f mb-2 w-full">
           <div className="flex items-center gap-4">
             {bestTime && (
               <div className="flex items-center gap-1.5">
@@ -85,12 +68,22 @@ const ProblemCard = ({
             </div>
           </div>
 
-          {/* Quick run button */}
-          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <Button size="p2">
-              <Zap className="h-4 w-4" />
-            </Button>
-          </div>
+          {problem.language && (
+            <span className="px-2 py-1 rounded-md bg-secondary">
+              <Code className="w-3 h-3 inline-block mr-1" /> {problem.language}
+            </span>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground truncate overflow-hidden whitespace-nowrap max-w-full">
+          {problem.description}
+        </p>
+
+        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <Button size="p2">
+            <Zap className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>

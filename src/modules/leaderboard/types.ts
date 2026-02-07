@@ -1,11 +1,8 @@
-export type Leaderboard = LeaderboardRank[];
-
-export interface LeaderboardRank {
+export interface LeaderboardUser {
   rank: number;
+  user_id: string;
   username: string;
-  pb: string;
-  runsCount: number;
-  problem: string;
-  category: "any%" | "100%";
-  assisted: boolean;
+  wins: number;
+  podiums: number;
+  problems_completed: number;
 }

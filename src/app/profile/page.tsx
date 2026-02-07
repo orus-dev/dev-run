@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 import ProfileStatCard from "@/app/profile/components/ProfileStatCard";
+import Rank from "@/components/app/Rank";
 
 export default function Profile() {
   const user = {
@@ -34,8 +35,8 @@ export default function Profile() {
               <div className="w-24 h-24 rounded-2xl bg-linear-to-br from-primary to-primary/60 flex items-center justify-center text-3xl font-bold text-primary-foreground glow-purple">
                 {user.username[0].toUpperCase()}
               </div>
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg rank-gold flex items-center justify-center text-sm font-bold glow-gold">
-                #{user.rank}
+              <div className="absolute -bottom-2 -right-2 w-8 h-8">
+                <Rank rank={user.rank} />
               </div>
             </div>
 
