@@ -43,7 +43,7 @@ export default function Run() {
             {runInfo && <RunTimer runInfo={runInfo} />}
           </div>
 
-          <div className="flex-1">
+          <div className="flex-2">
             <ProblemCard
               index={4}
               problem={{

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Problem } from "@/modules/problems/types";
 import { Clock, Zap, Users, Code } from "lucide-react";
 
@@ -53,21 +54,7 @@ const ProblemCard = ({
         </div>
 
         {/* Tags / Meta */}
-        <div className="flex flex-wrap gap-2 mb-4 text-xs text-muted-foreground">
-          {problem.language && (
-            <span className="px-2 py-1 rounded-md bg-secondary">
-              <Code className="w-3 h-3 inline-block mr-1" /> {problem.language}
-            </span>
-          )}
-        </div>
-
-        {/* Description */}
-        <p className="text-sm text-muted-foreground flex-1">
-          {problem.description}
-        </p>
-
-        {/* Stats + Action */}
-        <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground w-f mb-2 w-full">
           <div className="flex items-center gap-4">
             {bestTime && (
               <div className="flex items-center gap-1.5">
@@ -81,12 +68,22 @@ const ProblemCard = ({
             </div>
           </div>
 
-          {/* Quick run button */}
-          <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <Button size="p2">
-              <Zap className="h-4 w-4" />
-            </Button>
-          </div>
+          {problem.language && (
+            <span className="px-2 py-1 rounded-md bg-secondary">
+              <Code className="w-3 h-3 inline-block mr-1" /> {problem.language}
+            </span>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground truncate overflow-hidden whitespace-nowrap max-w-full">
+          {problem.description}
+        </p>
+
+        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <Button size="p2">
+            <Zap className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
