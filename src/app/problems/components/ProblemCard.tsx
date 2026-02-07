@@ -1,23 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Clock, Zap, Users } from "lucide-react";
-
-interface ProblemCardProps {
-  name: string;
-  difficulty: "easy" | "medium" | "hard";
-  tags: string[];
-  bestTime?: string;
-  attempts: number;
-  index?: number;
-}
+import { Problem } from "@/modules/problems/types";
+import { Clock, Zap, Users, Code } from "lucide-react";
 
 const ProblemCard = ({
-  name,
-  difficulty,
-  tags,
-  bestTime,
-  attempts,
+  problem,
   index = 0,
-}: ProblemCardProps) => {
+  bestTime,
+  attempts = 0,
+}: {
+  problem: Problem;
+  index?: number;
+  bestTime?: string;
+  attempts?: number;
+}) => {
   const difficultyStyles = {
     easy: "diff-easy",
     medium: "diff-medium",
@@ -46,29 +41,30 @@ const ProblemCard = ({
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-            {name}
+            {problem.title}
           </h3>
           <span
-            className={`px-2 py-1 rounded-md text-xs font-medium ${difficultyStyles[difficulty]}`}
+            className={`px-2 py-1 rounded-md text-xs font-medium ${
+              difficultyStyles[problem.difficulty]
+            }`}
           >
-            {difficultyLabels[difficulty]}
+            {difficultyLabels[problem.difficulty]}
           </span>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 rounded-md bg-secondary text-muted-foreground text-xs"
-            >
-              {tag}
+        {/* Tags / Meta */}
+        <div className="flex flex-wrap gap-2 mb-4 text-xs text-muted-foreground">
+          {problem.language && (
+            <span className="px-2 py-1 rounded-md bg-secondary">
+              <Code className="w-3 h-3 inline-block mr-1" /> {problem.language}
             </span>
-          ))}
+          )}
         </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
+        {/* Description */}
+        <p className="text-sm text-muted-foreground flex-1">
+          {problem.description}
+        </p>
 
         {/* Stats + Action */}
         <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">

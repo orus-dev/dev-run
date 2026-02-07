@@ -14,6 +14,8 @@ import { getProblems } from "@/modules/problems/actions";
 export default function Problems() {
   const [problems, problemsLoaded, problemsError] = useAction(getProblems);
 
+  console.log(problems);
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const difficulties = ["All", "Easy", "Medium", "Hard"];
@@ -84,7 +86,7 @@ export default function Problems() {
         >
           {problems &&
             problems.map((problem, i) => (
-              <ProblemCard key={problem.name} {...problem} index={i} />
+              <ProblemCard key={problem.title} index={i} problem={problem} />
             ))}
         </div>
       </div>

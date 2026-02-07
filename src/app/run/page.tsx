@@ -45,11 +45,15 @@ export default function Run() {
 
           <div className="flex-1">
             <ProblemCard
-              name="Idk"
-              difficulty="hard"
-              tags={[]}
-              attempts={0}
               index={4}
+              problem={{
+                id: "fix-auth-callback",
+                title: "Fix the Broken Auth Callback",
+                description:
+                  "Users can log in with OAuth, but sessions aren't persisted. Fix it.",
+                language: "typescript",
+                difficulty: "easy",
+              }}
             />
           </div>
         </div>
