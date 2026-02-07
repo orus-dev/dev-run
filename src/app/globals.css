@@ -163,33 +163,6 @@
 }
 
 @layer components {
-
-  /* ===== Glow effects ===== */
-  .glow-purple {
-    box-shadow:
-      0 0 20px color-mix(in oklch, var(--primary) 30%, transparent),
-      0 0 40px color-mix(in oklch, var(--primary) 10%, transparent);
-  }
-
-  .glow-purple-intense {
-    box-shadow:
-      0 0 30px color-mix(in oklch, var(--primary) 50%, transparent),
-      0 0 60px color-mix(in oklch, var(--primary) 20%, transparent);
-  }
-
-  .glow-gold {
-    box-shadow: 0 0 20px color-mix(in oklch, oklch(82.8% 0.189 84.429) 70%, transparent);
-    /* box-shadow: 0 0 20px color-mix(in oklch, var(--chart-4) 40%, transparent); */
-  }
-
-  .glow-silver {
-    box-shadow: 0 0 20px color-mix(in oklch, var(--foreground) 60%, transparent);
-  }
-
-  .glow-bronze {
-    box-shadow: 0 0 20px color-mix(in oklch, oklch(55.5% 0.163 48.998) 60%, transparent);
-  }
-
   /* ===== Text glow ===== */
   .text-glow {
     text-shadow: 0 0 20px color-mix(in oklch, var(--primary) 50%, transparent);
@@ -218,42 +191,11 @@
     box-shadow: 0 10px 40px color-mix(in oklch, var(--primary) 15%, transparent);
   }
 
-  /* ===== Timer / mono UI ===== */
+  /* ===== Timer ===== */
   .timer-display {
     font-family: var(--font-geist-mono);
     @apply text-6xl font-bold tracking-wider;
     text-shadow: 0 0 30px color-mix(in oklch, var(--primary) 60%, transparent);
-  }
-
-  .split-time {
-    font-family: var(--font-geist-mono);
-    @apply text-sm tracking-wide;
-  }
-
-  /* ===== Rank badges ===== */
-  .rank-gold {
-    @apply bg-linear-to-r from-yellow-500 to-amber-400 text-black;
-  }
-
-  .rank-silver {
-    @apply bg-linear-to-r from-gray-300 to-gray-400 text-black;
-  }
-
-  .rank-bronze {
-    @apply bg-linear-to-r from-orange-600 to-amber-700 text-white;
-  }
-
-  /* ===== Difficulty badges ===== */
-  .diff-easy {
-    @apply bg-emerald-500/20 text-emerald-400 border border-emerald-500/30;
-  }
-
-  .diff-medium {
-    @apply bg-amber-500/20 text-amber-400 border border-amber-500/30;
-  }
-
-  .diff-hard {
-    @apply bg-red-500/20 text-red-400 border border-red-500/30;
   }
 
   /* ===== Animations ===== */

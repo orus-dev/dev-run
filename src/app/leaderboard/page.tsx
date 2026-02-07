@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy, Calendar, Globe, TrendingUp } from "lucide-react";
+import { Calendar, Globe } from "lucide-react";
 import { useState } from "react";
 
 import { Card } from "@/components/ui/card";
@@ -21,15 +21,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import LeaderboardRow from "@/app/leaderboards/components/LeaderboardRow";
-import StatCard from "@/components/app/StatCard";
+import LeaderboardRow from "@/app/leaderboard/components/LeaderboardRow";
 import useAction from "@/hook/use-action";
 import {
   getGlobalLeaderboard,
   getWeeklyLeaderboard,
 } from "@/modules/leaderboard/actions";
 
-export default function Leaderboards() {
+export default function Leaderboard() {
   const [global] = useAction(getGlobalLeaderboard);
   const [weekly] = useAction(getWeeklyLeaderboard);
 
@@ -41,41 +40,13 @@ export default function Leaderboards() {
       <div className="container mx-auto px-6 space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold">Leaderboards</h1>
-          <p className="text-muted-foreground">
-            The fastest runners in the game. Will you claim a spot?
+          <h1 className="text-4xl font-bold">Leaderboard</h1>
+          <p className="text-sm text-muted-foreground mb-4">
+            1,284 runners · Ranked by performance
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            icon={Globe}
-            label="Total Runners"
-            value="12,453"
-            index={0}
-          />
-          <StatCard
-            icon={Trophy}
-            label="World Record"
-            value="2:34.21"
-            index={1}
-          />
-          <StatCard
-            icon={TrendingUp}
-            label="Runs This Week"
-            value="847K"
-            index={2}
-          />
-          <StatCard
-            icon={Calendar}
-            label="Until Reset"
-            value="5d 12h"
-            index={3}
-          />
-        </div>
-
-        {/* Tabs + Filters */}
+        {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 justify-between">
           <Tabs
             value={activeTab}

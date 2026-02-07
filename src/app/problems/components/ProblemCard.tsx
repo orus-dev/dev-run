@@ -1,4 +1,13 @@
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Problem } from "@/modules/problems/types";
 import { Clock, Zap, Users, Code } from "lucide-react";
@@ -15,9 +24,9 @@ const ProblemCard = ({
   attempts?: number;
 }) => {
   const difficultyStyles = {
-    easy: "diff-easy",
-    medium: "diff-medium",
-    hard: "diff-hard",
+    easy: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30",
+    medium: "bg-amber-500/10 text-amber-400 border border-amber-500/30",
+    hard: "bg-red-500/10 text-red-400 border border-red-500/30",
   };
 
   const difficultyLabels = {
@@ -27,66 +36,72 @@ const ProblemCard = ({
   };
 
   return (
-    <div
-      className="group relative bg-card border border-border rounded-xl p-5 card-hover cursor-pointer animate-fade-in opacity-0 h-full flex flex-col justify-between"
+    <Card
+      className={cn(
+        "group relative cursor-pointer overflow-hidden",
+        "animate-fade-in opacity-0 h-full",
+        "card-hover gap-3",
+      )}
       style={{
         animationDelay: `${index * 0.1}s`,
         animationFillMode: "forwards",
       }}
     >
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 rounded-xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      {/* Glow */}
+      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-      {/* Content */}
-      <div className="relative flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-            {problem.title}
-          </h3>
-          <span
-            className={`px-2 py-1 rounded-md text-xs font-medium ${
-              difficultyStyles[problem.difficulty]
-            }`}
+      {/* Header */}
+      <CardHeader>
+        <CardTitle className="flex justify-between items-center">
+          {problem.title}
+          <Badge
+            variant="secondary"
+            className={cn(
+              "text-xs font-medium text-green-600",
+              difficultyStyles[problem.difficulty],
+            )}
           >
             {difficultyLabels[problem.difficulty]}
-          </span>
-        </div>
+          </Badge>
+        </CardTitle>
 
-        {/* Tags / Meta */}
-        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground w-f mb-2 w-full">
-          <div className="flex items-center gap-4">
-            {bestTime && (
-              <div className="flex items-center gap-1.5">
-                <Clock className="h-4 w-4 text-primary" />
-                <span className="font-mono">{bestTime}</span>
-              </div>
-            )}
+        <CardDescription className="truncate whitespace-nowrap max-w-full">
+          {problem.description}
+        </CardDescription>
+      </CardHeader>
+
+      {/* Content */}
+      <CardContent className="flex flex-col gap-3">
+        {/* Meta */}
+        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+          {bestTime && (
             <div className="flex items-center gap-1.5">
-              <Users className="h-4 w-4" />
-              <span>{attempts} runs</span>
+              <Clock className="h-4 w-4 text-primary" />
+              <span className="font-mono">{bestTime}</span>
             </div>
+          )}
+
+          <div className="flex items-center gap-1.5">
+            <Users className="h-4 w-4" />
+            <span>{attempts} runs</span>
           </div>
 
           {problem.language && (
-            <span className="px-2 py-1 rounded-md bg-secondary">
-              <Code className="w-3 h-3 inline-block mr-1" /> {problem.language}
-            </span>
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <Code className="h-3 w-3" />
+              {problem.language}
+            </Badge>
           )}
         </div>
+      </CardContent>
 
-        {/* Description */}
-        <p className="text-sm text-muted-foreground truncate overflow-hidden whitespace-nowrap max-w-full">
-          {problem.description}
-        </p>
-
-        <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <Button size="p2">
-            <Zap className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
+      {/* Footer */}
+      <CardFooter className="absolute bottom-4 right-4 p-0 opacity-0 group-hover:opacity-100 transition-all">
+        <Button size="icon">
+          <Zap className="h-4 w-4" />
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
