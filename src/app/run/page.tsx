@@ -9,6 +9,7 @@ import Editor from "./components/Editor";
 import useAction from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
 import ProblemCard from "../problems/components/ProblemCard";
+import ProfileCard from "@/components/app/ProfileCard";
 
 export default function Run() {
   const [runInfo] = useAction(getLiveRun);
@@ -23,16 +24,16 @@ export default function Run() {
     <div className="h-svh px-20 pt-24 pb-12 flex gap-8">
       <div className="h-full w-full flex flex-col gap-4">
         <div className="w-full flex gap-5">
-          <div className="flex-1">
-            
+          <div className="flex-1 animate-fade-in opacity-0 duration-1000">
+            <ProfileCard user={{ username: "selimaj", rank: 1 }} />
+          </div>
+
+          <div className="flex-1 animate-fade-in opacity-0 duration-1000">
+            {runInfo && <RunTimer runInfo={runInfo} />}
           </div>
 
           <div className="flex-1">
             <ProblemCard name="Idk" difficulty="hard" tags={[]} attempts={0} />
-          </div>
-
-          <div className="flex-1">
-            {runInfo && <RunTimer runInfo={runInfo} />}
           </div>
         </div>
 
