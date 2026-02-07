@@ -8,7 +8,8 @@ import formatTime from "@/lib/time-format";
 import useAction from "@/hook/use-action";
 import { getProblem } from "@/modules/problems/actions";
 import Link from "next/link";
-import { LinkIcon } from "lucide-react";
+import { Eye, LinkIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function LiveRunRow({
   index,
@@ -57,10 +58,22 @@ export default function LiveRunRow({
       </TableCell>
 
       {/* Views */}
-      <TableCell>{isTop ? <Badge>{run.views}</Badge> : run.views}</TableCell>
+      <TableCell className="text-center">
+        {isTop ? <Badge>{run.views}</Badge> : run.views}
+      </TableCell>
 
-      {/* Live status with category color */}
-      <TableCell>{run.category}</TableCell>
+      {/* Category */}
+      <TableCell className="text-center">{run.category}</TableCell>
+
+      {/* Actions */}
+      <TableCell className="pr-5 text-end">
+        <Link href={`/runs/${run.id}`}>
+          <Button size="sm" variant={isTop ? "default" : "ghost"}>
+            <Eye className="h-4 w-4 mr-1" />
+            Watch
+          </Button>
+        </Link>
+      </TableCell>
     </TableRow>
   );
 }

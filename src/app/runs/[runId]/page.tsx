@@ -8,7 +8,7 @@ import { File } from "lucide-react";
 import Editor from "./components/Editor";
 import useAction, { useActionInterval } from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
-import ProblemCard from "../problems/components/ProblemCard";
+import ProblemCard from "@/app/problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
 import { getProblem } from "@/modules/problems/actions";
 

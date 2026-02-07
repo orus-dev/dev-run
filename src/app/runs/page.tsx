@@ -49,9 +49,10 @@ export default function LiveRuns() {
               <TableRow>
                 <TableHead className="pl-5">Runner</TableHead>
                 <TableHead>Problem</TableHead>
-                <TableHead className="w-20">Time</TableHead>
-                <TableHead className="w-20">Views</TableHead>
-                <TableHead className="pr-5">Category</TableHead>
+                <TableHead className="w-20 text-center">Time</TableHead>
+                <TableHead className="w-20 text-center">Views</TableHead>
+                <TableHead className="w-20 text-center">Category</TableHead>
+                <TableHead className="pr-5 w-24" />
               </TableRow>
             </TableHeader>
 
