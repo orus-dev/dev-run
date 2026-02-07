@@ -1,65 +1,14 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
-import { getSession, getSessionRedirect } from "../account/core";
 import * as Core from "./core";
 import { LiveRun } from "./types";
 
 export async function getLiveRuns(): Promise<LiveRun[]> {
-  const supabase = await createClient();
-
-  const _ = await getSession(supabase);
-
-  return [
-    {
-      id: "1",
-      username: "speedmaster_x",
-      problem: "fix-auth-callback",
-      category: "any%",
-      views: 670,
-      runsCount: 1,
-      start: new Date().getTime(),
-    },
-    {
-      id: "2",
-      username: "algo_ninja",
-      views: 3,
-      problem: "fix-prod-build",
-      category: "any%",
-      runsCount: 1,
-      start: new Date().getTime(),
-    },
-    {
-      id: "3",
-      username: "stackattack",
-      views: 3,
-      problem: "add-user-profile-endpoint",
-      category: "any%",
-      runsCount: 1,
-      start: new Date().getTime(),
-    },
-    {
-      id: "4",
-      username: "fix-prod-build",
-      views: 3,
-      problem: "Linked List Rush",
-      category: "any%",
-      runsCount: 1,
-      start: new Date().getTime(),
-    },
-  ];
+  return Core.getLiveRuns();
 }
 
-export async function getLiveRun(): Promise<LiveRun> {
-  return {
-    id: "0",
-    username: "selimaj",
-    start: 1770497350654,
-    views: 230,
-    problem: "fix-auth-callback",
-    category: "any%",
-    runsCount: 0,
-  };
+export async function getLiveRun(id: string): Promise<LiveRun | undefined> {
+  return Core.getLiveRun(id);
 }
 
 export async function getLiveRunMoves() {

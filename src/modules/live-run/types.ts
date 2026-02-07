@@ -7,3 +7,13 @@ export interface LiveRun {
   problem: string;
   category: "any%" | "100%";
 }
+
+export interface LiveRunMove {
+  latency: number;
+  cursor: number;
+  changes?: {
+    from: number;
+    to: number;
+    insert: string;
+  };
+}

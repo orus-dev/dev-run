@@ -11,7 +11,7 @@ import { java } from "@codemirror/lang-java";
 import { useEffect, useState } from "react";
 import useAction, { useActionOnce } from "@/hook/use-action";
 import { getLiveRunMoves } from "@/modules/live-run/actions";
-import { LiveRun } from "@/modules/live-run/types";
+import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
 
 type Language =
   | "javascript"
@@ -41,26 +41,16 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-type Move = {
-  latency: number;
-  cursor: number;
-  changes: {
-    from: number;
-    to: number;
-    insert: string;
-  };
-};
-
 export default function Editor({ run }: { run: LiveRun | null }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [moves] = useActionOnce<Move[]>(getLiveRunMoves, [run]);
+  const [moves] = useActionOnce<LiveRunMove[]>(getLiveRunMoves, [run]);
 
   useEffect(() => {
     if (!editorView || !moves) return;
 
     let cancelled = false;
 
-    const executeMove = async (move: Move) => {
+    const executeMove = async (move: LiveRunMove) => {
       return new Promise<void>((resolve) => {
         const timeout = setTimeout(() => {
           if (!editorView || cancelled) return resolve();
