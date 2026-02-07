@@ -32,22 +32,11 @@ export default function Problems() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+        <div className="flex flex-row flex-wrap gap-4 items-start lg:items-center">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search problems..." className="pl-9" />
-          </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            <ToggleGroup variant="outline" type="multiple">
-              {["Arrays", "Trees", "Graphs", "DP", "Strings"].map((f) => (
-                <ToggleGroupItem value={f.toLowerCase()} aria-label={f} key={f}>
-                  {f}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
           </div>
 
           {/* Difficulty Filter */}
@@ -63,7 +52,9 @@ export default function Problems() {
 
           {/* View Toggle */}
           <ToggleGroup
+            className="hidden md:block"
             type="single"
+            variant="outline"
             value={viewMode}
             onValueChange={(v) => v && setViewMode(v as "grid" | "list")}
           >
