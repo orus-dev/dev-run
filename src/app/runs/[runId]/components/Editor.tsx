@@ -41,7 +41,7 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-export default function Editor({ run }: { run: LiveRun | null }) {
+export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
   const [moves] = useActionOnce<LiveRunMove[]>(getLiveRunMoves, [run]);
 

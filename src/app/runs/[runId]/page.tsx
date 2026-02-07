@@ -11,15 +11,19 @@ import { getLiveRun } from "@/modules/live-run/actions";
 import ProblemCard from "@/app/problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
 import { getProblem } from "@/modules/problems/actions";
+import { useParams } from "next/navigation";
 
 export default function Run() {
-  const [run] = useActionInterval(getLiveRun, 1000);
+  const params = useParams<{ runId: string }>();
+
+  const [run] = useActionInterval(() => getLiveRun(params.runId), 1000, [
+    params,
+  ]);
+
   const [problem] = useAction(
     async () => (run?.id ? getProblem(run.problem) : null),
     [run],
   );
-
-  console.log(problem);
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
