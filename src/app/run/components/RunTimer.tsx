@@ -18,9 +18,9 @@ export default function RunTimer({ runInfo }: { runInfo: LiveRun }) {
   }, [runInfo.start]);
 
   return (
-    <Card className="relative text-center overflow-hidden">
+    <Card className="relative text-center overflow-hidden h-full">
       <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
-      <CardContent className="relative">
+      <CardContent className="relative flex justify-center items-center h-full">
         <p className="timer-display text-primary text-4xl font-bold">{time}</p>
       </CardContent>
     </Card>
