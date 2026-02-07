@@ -3,8 +3,7 @@
 import { Trophy, Calendar, Globe, TrendingUp } from "lucide-react";
 import { useState } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -13,7 +12,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import {
   Pagination,
   PaginationContent,
@@ -30,11 +28,10 @@ import {
   getGlobalLeaderboard,
   getWeeklyLeaderboard,
 } from "@/modules/leaderboard/actions";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function Leaderboards() {
-  const [global, globalLoaded, globalError] = useAction(getGlobalLeaderboard);
-  const [weekly, weeklyLoaded, weeklyError] = useAction(getWeeklyLeaderboard);
+  const [global] = useAction(getGlobalLeaderboard);
+  const [weekly] = useAction(getWeeklyLeaderboard);
 
   const [activeTab, setActiveTab] = useState<"global" | "weekly">("global");
   const data = (activeTab === "global" ? global : weekly) || [];
@@ -95,26 +92,6 @@ export default function Leaderboards() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-
-          <div className="flex flex-wrap gap-2">
-            <ToggleGroup variant="outline" type="single" defaultValue="any">
-              <ToggleGroupItem value="any" aria-label="any%">
-                any%
-              </ToggleGroupItem>
-              <ToggleGroupItem value="100" aria-label="100%">
-                100%
-              </ToggleGroupItem>
-            </ToggleGroup>
-
-            <ToggleGroup variant="outline" type="single">
-              <ToggleGroupItem value="true" aria-label="Assisted">
-                Assisted
-              </ToggleGroupItem>
-              <ToggleGroupItem value="false" aria-label="Unassisted">
-                Unassisted
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
         </div>
 
         {/* Table */}
@@ -122,28 +99,38 @@ export default function Leaderboards() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16">
-                  <p className="flex justify-center">Rank</p>
+                {/* Rank */}
+                <TableHead className="py-4 px-5 w-16 text-center">
+                  Rank
                 </TableHead>
-                <TableHead className="w-52">
-                  <p className="flex justify-center">Runner</p>
+
+                {/* Runner / Username */}
+                <TableHead className="py-4 px-4 text-left">Runner</TableHead>
+
+                {/* Wins */}
+                <TableHead className="py-4 px-4 w-24 text-center">
+                  Wins
                 </TableHead>
-                <TableHead className="w-24">
-                  <p className="flex justify-center">Time</p>
+
+                {/* Podiums */}
+                <TableHead className="py-4 px-4 w-24 text-center">
+                  Podiums
                 </TableHead>
-                <TableHead className="w-16">
-                  <p className="flex justify-center">Category</p>
+
+                {/* Problems Completed */}
+                <TableHead className="py-4 px-4 text-center">
+                  Problems Completed
                 </TableHead>
-                <TableHead className="w-24">
-                  <p className="flex justify-center">Assisted</p>
+
+                {/* User ID (optional) */}
+                <TableHead className="py-4 px-4 hidden md:table-cell text-left text-xs text-muted-foreground">
+                  User ID
                 </TableHead>
-                <TableHead className="w-16">Runs</TableHead>
-                <TableHead>Problem</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((entry, i) => (
-                <LeaderboardRow key={entry.username} index={i} run={entry} />
+                <LeaderboardRow key={entry.rank} index={i} run={entry} />
               ))}
             </TableBody>
           </Table>
