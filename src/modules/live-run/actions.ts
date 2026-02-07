@@ -56,7 +56,7 @@ export async function getLiveRun(): Promise<LiveRun> {
     username: "selimaj",
     start: 1770497350654,
     views: 230,
-    problem: "solve",
+    problem: "fix-auth-callback",
     category: "any%",
     runsCount: 0,
   };

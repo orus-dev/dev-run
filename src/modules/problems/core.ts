@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only";
-import { ProblemDefinition } from "./types";
+import { Problem, ProblemDefinition } from "./types";
 
 const problems: ProblemDefinition[] = [
   {
@@ -35,7 +35,7 @@ const problems: ProblemDefinition[] = [
   },
 ];
 
-export async function getProblems() {
+export async function getProblems(): Promise<Problem[]> {
   return problems.map((def) => ({
     id: def.id,
     title: def.title,
@@ -43,4 +43,18 @@ export async function getProblems() {
     difficulty: def.difficulty,
     language: def.language,
   }));
+}
+
+export async function getProblem(id: string): Promise<Problem | undefined> {
+  const problem = problems.find((p) => p.id === id);
+
+  if (!problem) return;
+
+  return {
+    id: problem.id,
+    title: problem.title,
+    description: problem.description,
+    difficulty: problem.difficulty,
+    language: problem.language,
+  };
 }

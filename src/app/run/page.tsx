@@ -10,9 +10,16 @@ import useAction, { useActionInterval } from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
 import ProblemCard from "../problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
+import { getProblem } from "@/modules/problems/actions";
 
 export default function Run() {
-  const [runInfo] = useActionInterval(getLiveRun, 1000);
+  const [run] = useActionInterval(getLiveRun, 1000);
+  const [problem] = useAction(
+    async () => (run?.id ? getProblem(run.problem) : null),
+    [run],
+  );
+
+  console.log(problem);
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
@@ -40,21 +47,11 @@ export default function Run() {
           </div>
 
           <div className="flex-1 animate-fade-in opacity-0 stagger-2">
-            {runInfo && <RunTimer run={runInfo} />}
+            {run && <RunTimer run={run} />}
           </div>
 
           <div className="flex-2">
-            <ProblemCard
-              index={4}
-              problem={{
-                id: "fix-auth-callback",
-                title: "Fix the Broken Auth Callback",
-                description:
-                  "Users can log in with OAuth, but sessions aren't persisted. Fix it.",
-                language: "typescript",
-                difficulty: "easy",
-              }}
-            />
+            {problem && <ProblemCard index={4} problem={problem} />}
           </div>
         </div>
 
