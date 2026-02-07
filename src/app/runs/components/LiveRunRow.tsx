@@ -16,7 +16,7 @@ export default function LiveRunRow({
   run: LiveRun;
 }) {
   const now = new Date().getTime() + 1000;
-  const isTop = false;
+  const isTop = run.views > 5;
 
   return (
     <TableRow
@@ -48,17 +48,7 @@ export default function LiveRunRow({
         {formatTime(now - run.start, false)}
       </TableCell>
 
-      <TableCell>
-        <Badge
-          className={
-            false
-              ? "bg-red-500/10 text-red-400"
-              : "bg-green-500/10 text-green-400"
-          }
-        >
-          0
-        </Badge>
-      </TableCell>
+      <TableCell>{isTop ? <Badge>{run.views}</Badge> : run.views}</TableCell>
 
       <TableCell>
         <div className="flex items-center gap-2 text-sm">

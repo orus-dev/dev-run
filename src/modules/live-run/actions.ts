@@ -16,12 +16,14 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
       username: "speedmaster_x",
       problem: "Two Sum Dash",
       category: "any%",
+      views: 670,
       runsCount: 1,
       start: new Date().getTime(),
     },
     {
       id: "2",
       username: "algo_ninja",
+      views: 3,
       problem: "Binary Sprint",
       category: "any%",
       runsCount: 1,
@@ -30,6 +32,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
     {
       id: "3",
       username: "stackattack",
+      views: 3,
       problem: "String Scramble",
       category: "any%",
       runsCount: 1,
@@ -38,6 +41,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
     {
       id: "4",
       username: "reset_king",
+      views: 3,
       problem: "Linked List Rush",
       category: "any%",
       runsCount: 1,
@@ -51,6 +55,7 @@ export async function getLiveRun(): Promise<LiveRun> {
     id: "0",
     username: "selimaj",
     start: new Date().getTime(),
+    views: 230,
     problem: "solve",
     category: "any%",
     runsCount: 0,
