@@ -67,7 +67,7 @@ export async function getGithubProfile(
 
 export async function getSession(
   supabase: SupabaseClient,
-): Promise<[User, UserProfile]> {
+): Promise<[User, UserProfile, string | undefined]> {
   const {
     data: { user },
     error: sessionError,
@@ -79,16 +79,9 @@ export async function getSession(
 
   const profile = await getProfile(supabase, user);
 
-  return [user, profile];
-}
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-export async function getSessionRedirect(
-  supabase: SupabaseClient,
-  redirect: (s: string) => void,
-): Promise<[User, UserProfile] | undefined> {
-  try {
-    return await getSession(supabase);
-  } catch {
-    redirect("/login");
-  }
+  return [user, profile, session?.access_token];
 }
