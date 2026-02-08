@@ -50,9 +50,10 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
 
   const [_, setLastMoveId] = useState<number>(-1);
   const [moves, setMoves] = useState<LiveRunMove[]>([]);
+  const [movesLoading, setMovesLoading] = useState(false);
 
   useEffect(() => {
-    if (!rawMoves || rawMoves.length === 0) return;
+    if (!rawMoves || rawMoves.length === 0 || movesLoading) return;
 
     setLastMoveId((prevLastMoveId) => {
       const newMoves = rawMoves.filter((move) => move.moveId > prevLastMoveId);
@@ -63,7 +64,7 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
 
       return Math.max(...newMoves.map((m) => m.moveId));
     });
-  }, [rawMoves]);
+  }, [rawMoves, movesLoading]);
 
   useEffect(() => {
     if (!editorView || !moves) return;
@@ -90,10 +91,12 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
 
     (async () => {
       if (!moves) return;
+      setMovesLoading(true);
       for (const move of moves) {
         if (cancelled) break;
         await executeMove(move);
       }
+      setMovesLoading(false);
     })();
 
     return () => {
