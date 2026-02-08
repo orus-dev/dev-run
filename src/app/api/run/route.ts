@@ -36,10 +36,10 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const { runId } = await req.json();
+  const runId = req.nextUrl.searchParams.get("runId");
 
   if (!runId)
-    return NextResponse.json({ error: "body requires runId" }, { status: 400 });
+    return NextResponse.json({ error: "missing ?runId=" }, { status: 400 });
 
   const supabase = await createClient();
 
@@ -57,6 +57,24 @@ export async function POST(req: NextRequest) {
     );
 
   const run = await Core.submitRun(supabase, liveRun, session[0].id);
+
+  return NextResponse.json({ ok: true, run });
+}
+
+export async function DELETE(req: NextRequest) {
+  const { runId } = await req.json();
+
+  if (!runId)
+    return NextResponse.json({ error: "body requires runId" }, { status: 400 });
+
+  const supabase = await createClient();
+
+  const session = await getSession(supabase);
+
+  if (!session)
+    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+
+  const run = await Core.removeLiveRun(runId);
 
   return NextResponse.json({ ok: true, run });
 }
