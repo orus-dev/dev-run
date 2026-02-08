@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Problem } from "@/modules/problems/types";
 import { Clock, Zap, Users, Code } from "lucide-react";
+import axios from "axios";
 
 const ProblemCard = ({
   problem,
@@ -100,7 +101,7 @@ const ProblemCard = ({
         <Button
           size="icon"
           onClick={async () => {
-            await fetch(`http://127.0.0.1:63780/start-run/${problem.id}`);
+            await axios.get(`http://127.0.0.1:63780/start-run/${problem.id}`);
             window.open("vscode://", "_blank");
           }}
         >

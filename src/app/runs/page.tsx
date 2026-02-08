@@ -9,12 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import LiveRunRow from "./components/LiveRunRow";
-import useAction from "@/hook/use-action";
+import useAction, { useActionInterval } from "@/hook/use-action";
 import { getLiveRuns } from "@/modules/live-run/actions";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function LiveRuns() {
-  const [liveRuns] = useAction(getLiveRuns);
+  const [liveRuns] = useActionInterval(getLiveRuns, 1500);
 
   // Sort top runners (status === 'pb') to the top
   const sortedRuns = [...(liveRuns || [])];
