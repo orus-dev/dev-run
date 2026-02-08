@@ -97,7 +97,13 @@ const ProblemCard = ({
 
       {/* Footer */}
       <CardFooter className="absolute bottom-4 right-4 p-0 opacity-0 group-hover:opacity-100 transition-all">
-        <Button size="icon">
+        <Button
+          size="icon"
+          onClick={async () => {
+            await fetch(`http://127.0.0.1:63780/start-run/${problem.id}`);
+            window.open("vscode://", "_blank");
+          }}
+        >
           <Zap className="h-4 w-4" />
         </Button>
       </CardFooter>

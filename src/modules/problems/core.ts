@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only";
-import { ProblemDefinition } from "./types";
+import { Problem, ProblemDefinition } from "./types";
 
 const problems: ProblemDefinition[] = [
   {
@@ -20,7 +20,7 @@ const problems: ProblemDefinition[] = [
     description:
       "Production build fails while development works. Fix the build.",
     language: "javascript",
-    difficulty: "easy",
+    difficulty: "hard",
     validate100: () => true,
     validateAny: () => true,
   },
@@ -29,13 +29,13 @@ const problems: ProblemDefinition[] = [
     title: "Implement Missing API Endpoint",
     description: "The frontend expects `/api/me`. Implement it correctly.",
     language: "go",
-    difficulty: "easy",
+    difficulty: "medium",
     validate100: () => true,
     validateAny: () => true,
   },
 ];
 
-export async function getProblems() {
+export async function getProblems(): Promise<Problem[]> {
   return problems.map((def) => ({
     id: def.id,
     title: def.title,
@@ -43,4 +43,18 @@ export async function getProblems() {
     difficulty: def.difficulty,
     language: def.language,
   }));
+}
+
+export async function getProblem(id: string): Promise<Problem | undefined> {
+  const problem = problems.find((p) => p.id === id);
+
+  if (!problem) return;
+
+  return {
+    id: problem.id,
+    title: problem.title,
+    description: problem.description,
+    difficulty: problem.difficulty,
+    language: problem.language,
+  };
 }

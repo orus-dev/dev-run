@@ -6,13 +6,24 @@ import RunChat, { ChatMessage } from "./components/RunChat";
 import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
 import Editor from "./components/Editor";
-import useAction from "@/hook/use-action";
+import useAction, { useActionInterval } from "@/hook/use-action";
 import { getLiveRun } from "@/modules/live-run/actions";
-import ProblemCard from "../problems/components/ProblemCard";
+import ProblemCard from "@/app/problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
+import { getProblem } from "@/modules/problems/actions";
+import { useParams } from "next/navigation";
 
 export default function Run() {
-  const [runInfo] = useAction(getLiveRun);
+  const params = useParams<{ runId: string }>();
+
+  const [run] = useActionInterval(() => getLiveRun(params.runId), 1000, [
+    params,
+  ]);
+
+  const [problem] = useAction(
+    async () => (run?.id ? getProblem(run.problem) : null),
+    [run],
+  );
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
@@ -40,21 +51,11 @@ export default function Run() {
           </div>
 
           <div className="flex-1 animate-fade-in opacity-0 stagger-2">
-            {runInfo && <RunTimer runInfo={runInfo} />}
+            {run && <RunTimer run={run} />}
           </div>
 
           <div className="flex-2">
-            <ProblemCard
-              index={4}
-              problem={{
-                id: "fix-auth-callback",
-                title: "Fix the Broken Auth Callback",
-                description:
-                  "Users can log in with OAuth, but sessions aren't persisted. Fix it.",
-                language: "typescript",
-                difficulty: "easy",
-              }}
-            />
+            {problem && <ProblemCard index={4} problem={problem} />}
           </div>
         </div>
 
@@ -85,7 +86,7 @@ export default function Run() {
                 <File size={16} /> myfile.js
               </header>
               <div className="flex-1 pt-3 pb-4 md:pb-5 w-full h-full">
-                <Editor />
+                <Editor run={run} />
               </div>
             </div>
           </CardContent>

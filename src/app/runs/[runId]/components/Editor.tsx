@@ -9,8 +9,9 @@ import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useState } from "react";
-import useAction from "@/hook/use-action";
+import useAction, { useActionOnce } from "@/hook/use-action";
 import { getLiveRunMoves } from "@/modules/live-run/actions";
+import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
 
 type Language =
   | "javascript"
@@ -40,26 +41,19 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-type Move = {
-  latency: number;
-  cursor: number;
-  changes: {
-    from: number;
-    to: number;
-    insert: string;
-  };
-};
-
-export default function Editor() {
+export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [moves] = useAction<Move[]>(getLiveRunMoves);
+  const [moves] = useActionOnce<LiveRunMove[]>(
+    async () => (run ? (await getLiveRunMoves(run.id)) || [] : []),
+    [run],
+  );
 
   useEffect(() => {
     if (!editorView || !moves) return;
 
     let cancelled = false;
 
-    const executeMove = async (move: Move) => {
+    const executeMove = async (move: LiveRunMove) => {
       return new Promise<void>((resolve) => {
         const timeout = setTimeout(() => {
           if (!editorView || cancelled) return resolve();

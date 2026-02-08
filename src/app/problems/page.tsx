@@ -14,8 +14,6 @@ import { getProblems } from "@/modules/problems/actions";
 export default function Problems() {
   const [problems, problemsLoaded, problemsError] = useAction(getProblems);
 
-  console.log(problems);
-
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const difficulties = ["All", "Easy", "Medium", "Hard"];
