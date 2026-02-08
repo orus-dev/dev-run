@@ -25,11 +25,7 @@ export async function signInWithGitHub(origin: string) {
 export async function getSession() {
   const supabase = await createClient();
 
-  try {
-    return await Core.getSession(supabase);
-  } catch {
-    return redirect("/login");
-  }
+  return await Core.getSession(supabase);
 }
 
 export async function signOut() {

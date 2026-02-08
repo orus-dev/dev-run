@@ -7,7 +7,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
   return Core.getLiveRuns();
 }
 
-export async function getLiveRun(id: string): Promise<LiveRun | undefined> {
+export async function getLiveRun(id: string): Promise<LiveRun | null> {
   return Core.getLiveRun(id);
 }
 
