@@ -11,7 +11,7 @@ app.prepare().then(() => {
     handle(req, res);
   });
   
-  const clients = {};
+  const runs = {};
 
   const wss = new WebSocketServer({ noServer: true });
 
@@ -19,8 +19,8 @@ app.prepare().then(() => {
   wss.on('connection', (ws, req) => {
     ws.on('message', (msg) => {
       const runId = msg.toString();
-      if (!clients[runId]) clients[runId] = []
-      clients[runId].push(ws);
+      if (!runs[runId]) runs[runId] = { clients: [] }
+      runs[runId].clients.push(ws);
     });
   });
 
@@ -33,7 +33,7 @@ app.prepare().then(() => {
       req.on('end', () => {
         const move = JSON.parse(body);
 
-        clients[move.runId]?.forEach(client => {
+        runs[move.runId]?.clients.forEach(client => {
           if (client.readyState === client.OPEN) {
             client.send(JSON.stringify(move.moves));
           }

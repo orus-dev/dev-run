@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.mjs",
-    "build": "next build",
-    "start": "NODE_ENV=production node server.mjs"
+    "dev": "npm run buildserver && node ./.next/server.js",
+    "build": "npm run buildserver && next build",
+    "start": "npm run buildserver && NODE_ENV=production node ./.next/server.js",
+    "buildserver": "tsc -p server.tsconfig.json"
   },
   "dependencies": {
     "@codemirror/lang-go": "^6.0.1",
