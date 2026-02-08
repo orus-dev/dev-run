@@ -16,7 +16,7 @@ import { useParams } from "next/navigation";
 export default function Run() {
   const params = useParams<{ runId: string }>();
 
-  const [run] = useActionInterval(() => getLiveRun(params.runId), 1000, [
+  const [run] = useActionInterval(() => getLiveRun(params.runId), 5000, [
     params,
   ]);
 

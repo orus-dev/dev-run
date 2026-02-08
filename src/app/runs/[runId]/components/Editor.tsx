@@ -8,7 +8,7 @@ import { go } from "@codemirror/lang-go";
 import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAction from "@/hook/use-action";
 import { getLiveRunMoves } from "@/modules/live-run/actions";
 import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
@@ -43,66 +43,70 @@ function getLanguageExtension(lang: Language) {
 
 export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [rawMoves] = useAction<LiveRunMove[]>(
-    async () => (run ? await getLiveRunMoves(run.id) : []),
-    [run],
-  );
+  const [isConnected, setConnected] = useState(false);
 
-  const [_, setLastMoveId] = useState<number>(-1);
-  const [moves, setMoves] = useState<LiveRunMove[]>([]);
+  const [rawMoves, setRawMoves] = useState<LiveRunMove[]>([]);
   const [movesLoading, setMovesLoading] = useState(false);
+  const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
 
+  // WebSocket connection
   useEffect(() => {
-    if (!rawMoves || rawMoves.length === 0 || movesLoading) return;
+    if (!run) return;
 
-    setLastMoveId((prevLastMoveId) => {
-      const newMoves = rawMoves.filter((move) => move.moveId > prevLastMoveId);
+    const ws = new WebSocket(`ws://${window.location.host}/api/view-run`);
 
-      if (newMoves.length === 0) return prevLastMoveId;
-
-      setMoves(newMoves);
-
-      return Math.max(...newMoves.map((m) => m.moveId));
-    });
-  }, [rawMoves, movesLoading]);
-
-  useEffect(() => {
-    if (!editorView || !moves) return;
-
-    let cancelled = false;
-
-    const executeMove = async (move: LiveRunMove) => {
-      return new Promise<void>((resolve) => {
-        const timeout = setTimeout(() => {
-          if (!editorView || cancelled) return resolve();
-
-          editorView.dispatch({
-            selection: { anchor: move.cursor },
-            scrollIntoView: true,
-            changes: move.changes,
-          });
-
-          resolve();
-        }, move.latency);
-
-        return () => clearTimeout(timeout);
-      });
+    ws.onopen = () => {
+      ws.send(run.id);
     };
 
-    (async () => {
-      if (!moves) return;
-      setMovesLoading(true);
-      for (const move of moves) {
-        if (cancelled) break;
-        await executeMove(move);
-      }
-      setMovesLoading(false);
-    })();
+    ws.onmessage = (m) => {
+      const data: LiveRunMove[] = JSON.parse(m.data);
+      setRawMoves(data);
+    };
+
+    return () => ws.close();
+  }, [run]);
+
+  // Scheduler
+  useEffect(() => {
+    if (!editorView || !rawMoves.length) return;
+
+    setMovesLoading(true);
+
+    // Clear any existing scheduled timeouts
+    scheduledTimeouts.current.forEach((t) => clearTimeout(t));
+    scheduledTimeouts.current = [];
+
+    const startTime = Date.now();
+
+    rawMoves.forEach((move) => {
+      const timeout = setTimeout(() => {
+        if (!editorView) return;
+
+        editorView.dispatch({
+          selection: { anchor: move.cursor },
+          scrollIntoView: true,
+          changes: move.changes,
+        });
+      }, move.latency);
+
+      scheduledTimeouts.current.push(timeout);
+    });
+
+    // Stop loading after the last move
+    const lastMoveLatency = rawMoves[rawMoves.length - 1].latency;
+    const finishTimeout = setTimeout(
+      () => setMovesLoading(false),
+      lastMoveLatency + 50,
+    );
+    scheduledTimeouts.current.push(finishTimeout);
 
     return () => {
-      cancelled = true;
+      scheduledTimeouts.current.forEach((t) => clearTimeout(t));
+      scheduledTimeouts.current = [];
+      setMovesLoading(false);
     };
-  }, [moves]);
+  }, [rawMoves, editorView]);
 
   return (
     <CodeMirror
