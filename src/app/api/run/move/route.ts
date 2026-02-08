@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
       { status: 401 },
     );
 
+  console.log(moves);
+
   const run = await Core.addLiveRunMoves(liveRun.id, moves);
 
   return NextResponse.json({ ok: true, run });

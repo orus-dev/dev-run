@@ -43,10 +43,14 @@ function getLanguageExtension(lang: Language) {
 
 export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [moves] = useActionOnce<LiveRunMove[]>(
-    async () => (run ? (await getLiveRunMoves(run.id)) || [] : []),
+  const [moves] = useAction<LiveRunMove[]>(
+    async () => (run ? await getLiveRunMoves(run.id) : []),
     [run],
   );
+
+  useEffect(() => {
+    console.log(moves);
+  }, [moves]);
 
   useEffect(() => {
     if (!editorView || !moves) return;

@@ -3,9 +3,7 @@
 import "server-only";
 import { LiveRun, LiveRunMove } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
-import Redis from "ioredis";
-
-const redis = new Redis(process.env.REDIS_URL!);
+import { redis } from "@/lib/redis";
 
 /** -------------------- Live Runs in Redis -------------------- */
 
@@ -57,6 +55,9 @@ export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
   const pipeline = redis.pipeline();
   moves.forEach((move) => {
     pipeline.rpush(`liveRunMoves:${id}`, JSON.stringify(move));
+    setTimeout(() => {
+      redis.del(`liveRunMoves:${id}`);
+    }, 3000);
   });
 
   // Optional: keep moves ephemeral automatically after 3s
@@ -81,7 +82,7 @@ export async function getLiveRunMoves(id: string): Promise<LiveRunMove[]> {
 export async function submitRun(
   supabase: SupabaseClient,
   run: LiveRun,
-  user_id: string
+  user_id: string,
 ) {
   const now = new Date();
   const durationMs = now.getTime() - run.start;
