@@ -3,57 +3,85 @@
 import "server-only";
 import { LiveRun, LiveRunMove } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
+import Redis from "ioredis";
 
-const liveRuns: LiveRun[] = [];
-const liveRunMoves: Record<string, LiveRunMove[]> = {};
+const redis = new Redis(process.env.REDIS_URL!);
 
+/** -------------------- Live Runs in Redis -------------------- */
+
+/**
+ * Add a live run to Redis
+ */
+export async function addLiveRun(run: LiveRun) {
+  const exists = await redis.exists(`liveRun:${run.id}`);
+  if (exists) throw new Error("Duplicate run");
+
+  await redis.set(`liveRun:${run.id}`, JSON.stringify(run));
+}
+
+/**
+ * Get a live run from Redis
+ */
+export async function getLiveRun(id: string): Promise<LiveRun | null> {
+  const data = await redis.get(`liveRun:${id}`);
+  if (!data) return null;
+  return JSON.parse(data) as LiveRun;
+}
+
+/**
+ * Get all live runs
+ */
 export async function getLiveRuns(): Promise<LiveRun[]> {
-  return liveRuns;
+  const keys = await redis.keys("liveRun:*");
+  if (keys.length === 0) return [];
+  const runs = await redis.mget(...keys);
+  return runs.filter(Boolean).map((r) => JSON.parse(r!) as LiveRun);
 }
 
-export async function getLiveRun(id: string): Promise<LiveRun | undefined> {
-  return liveRuns.find((r) => r.id === id);
+/**
+ * Remove a live run from Redis
+ */
+export async function removeLiveRun(id: string) {
+  await redis.del(`liveRun:${id}`, `liveRunMoves:${id}`);
 }
 
-export async function getLiveRunMoves(
-  id: string,
-): Promise<LiveRunMove[] | undefined> {
-  return liveRunMoves[id];
-}
+/** -------------------- Live Run Moves -------------------- */
 
-export async function addRun(run: LiveRun) {
-  if (liveRuns.find((r) => r.id === run.id || r.username === run.username))
-    throw "Duplicate run";
-
-  liveRuns.push(run);
-}
-
+/**
+ * Add moves to a live run (ephemeral)
+ */
 export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
-  if (!liveRunMoves[id]) throw "Invalid run";
+  const runExists = await redis.exists(`liveRun:${id}`);
+  if (!runExists) throw new Error("Invalid run");
 
-  // Add the moves immediately
-  liveRunMoves[id] = [...liveRunMoves[id], ...moves];
+  const pipeline = redis.pipeline();
+  moves.forEach((move) => {
+    pipeline.rpush(`liveRunMoves:${id}`, JSON.stringify(move));
+  });
 
-  // After 3 seconds, remove only the moves we just added
-  setTimeout(() => {
-    liveRunMoves[id] = liveRunMoves[id].filter((move) => !moves.includes(move));
-  }, 3000);
+  // Optional: keep moves ephemeral automatically after 3s
+  pipeline.expire(`liveRunMoves:${id}`, 3);
+  await pipeline.exec();
 }
 
-export async function removeLiveRun(runId: string) {
-  delete liveRunMoves[runId];
-
-  const index = liveRuns.findIndex((run) => run.id === runId);
-
-  if (index !== -1) {
-    liveRuns.splice(index, 1);
-  }
+/**
+ * Get live moves for a run
+ */
+export async function getLiveRunMoves(id: string): Promise<LiveRunMove[]> {
+  const moves = await redis.lrange(`liveRunMoves:${id}`, 0, -1);
+  return moves.map((m) => JSON.parse(m)) as LiveRunMove[];
 }
 
+/** -------------------- Submit Run -------------------- */
+
+/**
+ * Submit a run to Supabase (persistent storage)
+ * and remove it from Redis
+ */
 export async function submitRun(
   supabase: SupabaseClient,
   run: LiveRun,
-  user_id: string,
+  user_id: string
 ) {
   const now = new Date();
   const durationMs = now.getTime() - run.start;
@@ -80,6 +108,8 @@ export async function submitRun(
     console.error("Error inserting run:", error);
     throw error;
   }
+
+  await removeLiveRun(run.id);
 
   return data;
 }

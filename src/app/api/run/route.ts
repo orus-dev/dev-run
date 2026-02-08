@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest) {
 
   const runId = randomUUID();
 
-  await Core.addRun({
+  await Core.addLiveRun({
     problem,
     category,
     id: runId,
