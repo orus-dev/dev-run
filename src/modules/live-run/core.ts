@@ -4,6 +4,7 @@ import "server-only";
 import { LiveRun, LiveRunMove } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { redis } from "@/lib/redis";
+import { randomInt } from "crypto";
 
 /** -------------------- Live Runs in Redis -------------------- */
 
@@ -55,13 +56,12 @@ export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
   const pipeline = redis.pipeline();
   moves.forEach((move) => {
     pipeline.rpush(`liveRunMoves:${id}`, JSON.stringify(move));
-    setTimeout(() => {
-      redis.del(`liveRunMoves:${id}`);
-    }, 3000);
   });
 
-  // Optional: keep moves ephemeral automatically after 3s
-  pipeline.expire(`liveRunMoves:${id}`, 3);
+  setTimeout(() => {
+    redis.del(`liveRunMoves:${id}`);
+  }, 3000);
+
   await pipeline.exec();
 }
 

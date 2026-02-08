@@ -11,6 +11,7 @@ export interface LiveRun {
 export interface LiveRunMove {
   latency: number;
   cursor: number;
+  moveId: number;
   changes?: {
     from: number;
     to: number;

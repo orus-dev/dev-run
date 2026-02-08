@@ -9,7 +9,7 @@ import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useState } from "react";
-import useAction, { useActionOnce } from "@/hook/use-action";
+import useAction from "@/hook/use-action";
 import { getLiveRunMoves } from "@/modules/live-run/actions";
 import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
 
@@ -43,13 +43,31 @@ function getLanguageExtension(lang: Language) {
 
 export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [moves] = useAction<LiveRunMove[]>(
+  const [rawMoves] = useAction<LiveRunMove[]>(
     async () => (run ? await getLiveRunMoves(run.id) : []),
     [run],
   );
 
+  const [lastMoveId, setLastMoveId] = useState<number>(-1);
+  const [moves, setMoves] = useState<LiveRunMove[]>([]);
+
   useEffect(() => {
-    console.log(moves);
+    let moves = rawMoves?.filter((move) => move.moveId > lastMoveId) || [];
+
+    if (moves.length === 0) return;
+
+    setMoves(moves);
+    setLastMoveId(lastMoveId + moves.length);
+
+    if (rawMoves?.length || 0 > 0) {
+      console.log("raw", rawMoves);
+    }
+  }, [rawMoves]);
+
+  useEffect(() => {
+    if (moves.length > 0) {
+      console.log("moves", moves);
+    }
   }, [moves]);
 
   useEffect(() => {
@@ -63,7 +81,7 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
           if (!editorView || cancelled) return resolve();
 
           editorView.dispatch({
-            selection: { anchor: move.cursor },
+            // selection: { anchor: move.cursor },
             scrollIntoView: true,
             changes: move.changes,
           });
@@ -86,7 +104,7 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
     return () => {
       cancelled = true;
     };
-  }, [editorView, moves]);
+  }, [moves]);
 
   return (
     <CodeMirror
