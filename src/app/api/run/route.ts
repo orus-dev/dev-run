@@ -48,15 +48,15 @@ export async function POST(req: NextRequest) {
   if (!session)
     return NextResponse.json({ error: "Invalid session" }, { status: 401 });
 
-  const run = await Core.getLiveRun(runId);
+  const liveRun = await Core.getLiveRun(runId);
 
-  if (!run)
+  if (!liveRun)
     return NextResponse.json(
       { error: "Run is not live or does not exist" },
       { status: 401 },
     );
 
-  await Core.submitRun(supabase, run, session[0].id);
+  const run = await Core.submitRun(supabase, liveRun, session[0].id);
 
-  return NextResponse.json({ ok: true, runId });
+  return NextResponse.json({ ok: true, run });
 }

@@ -22,7 +22,7 @@ export async function getLiveRunMoves(
 }
 
 export async function addRun(run: LiveRun) {
-  if (!liveRuns.find((r) => r.id === run.id || r.username === run.username))
+  if (liveRuns.find((r) => r.id === run.id || r.username === run.username))
     throw "Duplicate run";
 
   liveRuns.push(run);
