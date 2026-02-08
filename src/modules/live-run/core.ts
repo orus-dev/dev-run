@@ -43,35 +43,6 @@ export async function removeLiveRun(id: string) {
   await redis.del(`liveRun:${id}`, `liveRunMoves:${id}`);
 }
 
-/** -------------------- Live Run Moves -------------------- */
-
-/**
- * Add moves to a live run (ephemeral)
- */
-export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
-  const runExists = await redis.exists(`liveRun:${id}`);
-  if (!runExists) throw new Error("Invalid run");
-
-  const pipeline = redis.pipeline();
-  moves.forEach((move) => {
-    pipeline.rpush(`liveRunMoves:${id}`, JSON.stringify(move));
-  });
-
-  setTimeout(() => {
-    redis.del(`liveRunMoves:${id}`);
-  }, 3000);
-
-  await pipeline.exec();
-}
-
-/**
- * Get live moves for a run
- */
-export async function getLiveRunMoves(id: string): Promise<LiveRunMove[]> {
-  const moves = await redis.lrange(`liveRunMoves:${id}`, 0, -1);
-  return moves.map((m) => JSON.parse(m)) as LiveRunMove[];
-}
-
 /** -------------------- Submit Run -------------------- */
 
 /**

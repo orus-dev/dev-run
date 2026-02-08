@@ -9,8 +9,6 @@ import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useRef, useState } from "react";
-import useAction from "@/hook/use-action";
-import { getLiveRunMoves } from "@/modules/live-run/actions";
 import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
 
 type Language =

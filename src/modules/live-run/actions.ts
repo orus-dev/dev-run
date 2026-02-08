@@ -10,7 +10,3 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
 export async function getLiveRun(id: string): Promise<LiveRun | null> {
   return Core.getLiveRun(id);
 }
-
-export async function getLiveRunMoves(id: string) {
-  return Core.getLiveRunMoves(id);
-}
