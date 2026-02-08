@@ -48,27 +48,22 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
     [run],
   );
 
-  const [lastMoveId, setLastMoveId] = useState<number>(-1);
+  const [_, setLastMoveId] = useState<number>(-1);
   const [moves, setMoves] = useState<LiveRunMove[]>([]);
 
   useEffect(() => {
-    let moves = rawMoves?.filter((move) => move.moveId > lastMoveId) || [];
+    if (!rawMoves || rawMoves.length === 0) return;
 
-    if (moves.length === 0) return;
+    setLastMoveId((prevLastMoveId) => {
+      const newMoves = rawMoves.filter((move) => move.moveId > prevLastMoveId);
 
-    setMoves(moves);
-    setLastMoveId(lastMoveId + moves.length);
+      if (newMoves.length === 0) return prevLastMoveId;
 
-    if (rawMoves?.length || 0 > 0) {
-      console.log("raw", rawMoves);
-    }
+      setMoves(newMoves);
+
+      return Math.max(...newMoves.map((m) => m.moveId));
+    });
   }, [rawMoves]);
-
-  useEffect(() => {
-    if (moves.length > 0) {
-      console.log("moves", moves);
-    }
-  }, [moves]);
 
   useEffect(() => {
     if (!editorView || !moves) return;
@@ -81,7 +76,7 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
           if (!editorView || cancelled) return resolve();
 
           editorView.dispatch({
-            // selection: { anchor: move.cursor },
+            selection: { anchor: move.cursor },
             scrollIntoView: true,
             changes: move.changes,
           });
