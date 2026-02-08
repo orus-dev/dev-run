@@ -41,10 +41,6 @@ function getLanguageExtension(lang: Language) {
 
 export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
-  const [isConnected, setConnected] = useState(false);
-
-  const [rawMoves, setRawMoves] = useState<LiveRunMove[]>([]);
-  const [movesLoading, setMovesLoading] = useState(false);
   const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
 
   // WebSocket connection
@@ -59,52 +55,24 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
 
     ws.onmessage = (m) => {
       const data: LiveRunMove[] = JSON.parse(m.data);
-      setRawMoves(data);
+
+      data.forEach((move) => {
+        const timeout = setTimeout(() => {
+          if (!editorView) return;
+
+          editorView.dispatch({
+            selection: { anchor: move.cursor },
+            scrollIntoView: true,
+            changes: move.changes,
+          });
+        }, move.latency);
+
+        scheduledTimeouts.current.push(timeout);
+      });
     };
 
     return () => ws.close();
   }, [run]);
-
-  // Scheduler
-  useEffect(() => {
-    if (!editorView || !rawMoves.length) return;
-
-    setMovesLoading(true);
-
-    // Clear any existing scheduled timeouts
-    scheduledTimeouts.current.forEach((t) => clearTimeout(t));
-    scheduledTimeouts.current = [];
-
-    const startTime = Date.now();
-
-    rawMoves.forEach((move) => {
-      const timeout = setTimeout(() => {
-        if (!editorView) return;
-
-        editorView.dispatch({
-          selection: { anchor: move.cursor },
-          scrollIntoView: true,
-          changes: move.changes,
-        });
-      }, move.latency);
-
-      scheduledTimeouts.current.push(timeout);
-    });
-
-    // Stop loading after the last move
-    const lastMoveLatency = rawMoves[rawMoves.length - 1].latency;
-    const finishTimeout = setTimeout(
-      () => setMovesLoading(false),
-      lastMoveLatency + 50,
-    );
-    scheduledTimeouts.current.push(finishTimeout);
-
-    return () => {
-      scheduledTimeouts.current.forEach((t) => clearTimeout(t));
-      scheduledTimeouts.current = [];
-      setMovesLoading(false);
-    };
-  }, [rawMoves, editorView]);
 
   return (
     <CodeMirror
