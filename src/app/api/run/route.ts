@@ -36,10 +36,10 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const runId = req.nextUrl.searchParams.get("runId");
+  const { runId } = await req.json();
 
   if (!runId)
-    return NextResponse.json({ error: "missing ?runId=" }, { status: 400 });
+    return NextResponse.json({ error: "body requires runId" }, { status: 400 });
 
   const supabase = await createClient();
 
@@ -62,10 +62,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const { runId } = await req.json();
+  const runId = req.nextUrl.searchParams.get("runId");
 
   if (!runId)
-    return NextResponse.json({ error: "body requires runId" }, { status: 400 });
+    return NextResponse.json({ error: "missing ?runId=" }, { status: 400 });
 
   const supabase = await createClient();
 
