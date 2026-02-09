@@ -10,6 +10,8 @@ import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useRef, useState } from "react";
 import { LiveRun, LiveRunEvent, LiveRunMove } from "@/modules/live-run/types";
+import useAction from "@/hook/use-action";
+import { getOrigin } from "@/modules/getOrigin";
 
 type Language =
   | "javascript"
@@ -46,6 +48,7 @@ export default function Editor({
   run: LiveRun | null | undefined;
   onEvent: (s: LiveRunEvent) => void;
 }) {
+  const [origin] = useAction(getOrigin);
   const [editorView, setEditorView] = useState<EditorView>();
   const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
   const [text, setText] = useState("");
@@ -53,9 +56,9 @@ export default function Editor({
 
   // WebSocket connection
   useEffect(() => {
-    if (!run) return;
+    if (!run || !origin?.host) return;
 
-    const ws = new WebSocket(`ws://${window.location.host}/api/view-run`);
+    const ws = new WebSocket(`ws://${origin.host}/api/view-run`);
 
     ws.onopen = () => {
       ws.send(run.id);
@@ -97,7 +100,7 @@ export default function Editor({
     };
 
     return () => ws.close();
-  }, [run]);
+  }, [run, ]);
 
   return (
     <CodeMirror
