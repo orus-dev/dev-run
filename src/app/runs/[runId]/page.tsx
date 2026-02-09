@@ -12,18 +12,19 @@ import ProblemCard from "@/app/problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
 import { getProblem } from "@/modules/problems/actions";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function Run() {
   const params = useParams<{ runId: string }>();
 
-  const [run] = useActionInterval(() => getLiveRun(params.runId), 5000, [
-    params,
-  ]);
+  const [run] = useAction(() => getLiveRun(params.runId), [params]);
 
   const [problem] = useAction(
     async () => (run?.id ? getProblem(run.problem) : null),
     [run],
   );
+
+  const [file, setFile] = useState<string | null>(null);
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
@@ -83,10 +84,10 @@ export default function Run() {
             {/* Code */}
             <div className="flex-1 w-full max-h-svh md:max-h-full h-full pl-0 md:pl-5 flex flex-col">
               <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <File size={16} /> myfile.js
+                <File size={16} /> {file}
               </header>
               <div className="flex-1 pt-3 pb-4 md:pb-5 w-full h-full">
-                <Editor run={run} />
+                <Editor run={run} setFile={setFile} />
               </div>
             </div>
           </CardContent>

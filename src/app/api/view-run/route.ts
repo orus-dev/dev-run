@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import Redis from "ioredis";
-import { LiveRunMove } from "@/modules/live-run/types";
 import { NextRequest, NextResponse } from "next/server";
+import { LiveRunEvent } from "@/modules/live-run/types";
 
 export function GET(req: NextRequest) {
   const headers = new Headers();
@@ -11,17 +11,18 @@ export function GET(req: NextRequest) {
 }
 
 export function UPGRADE(client: WebSocket, server: WebSocketServer) {
-  console.log("A client connected");
-
   const subscriber = new Redis();
   let runId: string;
 
   client.once("message", (message) => {
     runId = message.toString();
+    let file: string | null;
 
     const sendText = async () => {
       const text = await subscriber.get(`liveRunText:${runId}`);
-      client.send(JSON.stringify({ moves: [], text }));
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ file, moves: [], text }));
+      }
     };
 
     sendText();
@@ -32,15 +33,14 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
       if (err) {
         console.error("Failed to subscribe", err);
         client.close(1011, "Redis subscription failed");
-      } else {
-        console.log(`Subscribed to ${count} channels`);
       }
     });
 
     subscriber.on("message", (channel, message) => {
-      const moves = JSON.parse(message);
+      const data: LiveRunEvent = JSON.parse(message);
+      file = data.file;
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ moves, text: null }));
+        client.send(JSON.stringify({ moves: data.moves, file, text: null }));
       }
     });
   });
@@ -48,7 +48,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.once("close", async () => {
     if (runId) await subscriber.unsubscribe(`liveRun:${runId}`);
     subscriber.quit();
-    console.log("Client disconnected, Redis unsubscribed");
   });
 
   client.on("error", (err) => {

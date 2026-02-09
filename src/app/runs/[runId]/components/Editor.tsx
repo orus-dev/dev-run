@@ -39,7 +39,13 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-export default function Editor({ run }: { run: LiveRun | null | undefined }) {
+export default function Editor({
+  run,
+  setFile,
+}: {
+  run: LiveRun | null | undefined;
+  setFile: (s: string | null) => void;
+}) {
   const [editorView, setEditorView] = useState<EditorView>();
   const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
   const [text, setText] = useState("");
@@ -55,9 +61,13 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
     };
 
     ws.onmessage = (m) => {
-      const data: { moves: LiveRunMove[]; text: string | null } = JSON.parse(
-        m.data,
-      );
+      const data: {
+        moves: LiveRunMove[];
+        file: string | null;
+        text: string | null;
+      } = JSON.parse(m.data);
+
+      setFile(data.file);
 
       if (data.text) {
         setText(data.text);
