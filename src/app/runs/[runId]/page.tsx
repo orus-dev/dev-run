@@ -24,7 +24,10 @@ export default function Run() {
     [run],
   );
 
-  const [file, setFile] = useState<string | null>(null);
+  const [file, setFile] = useState<{
+    file: string | null;
+    language: string | null;
+  }>({ file: null, language: null });
 
   const chatMessages: ChatMessage[] = [
     { user: "Alice", message: "Nice split!", time: "1:53" },
@@ -84,10 +87,15 @@ export default function Run() {
             {/* Code */}
             <div className="flex-1 w-full max-h-svh md:max-h-full h-full pl-0 md:pl-5 flex flex-col">
               <header className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <File size={16} /> {file}
+                <File size={16} /> {file.file}
               </header>
               <div className="flex-1 pt-3 pb-4 md:pb-5 w-full h-full">
-                <Editor run={run} setFile={setFile} />
+                <Editor
+                  run={run}
+                  onEvent={(event) => {
+                    setFile({ file: event.file, language: event.language });
+                  }}
+                />
               </div>
             </div>
           </CardContent>

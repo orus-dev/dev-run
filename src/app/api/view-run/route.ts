@@ -14,14 +14,22 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   const subscriber = new Redis();
   let runId: string;
 
-  client.once("message", (message) => {
+  client.once("message", async (message) => {
     runId = message.toString();
-    let file: string | null;
+    let lastEvent: LiveRunEvent | null = null;
 
     const sendText = async () => {
       const text = await subscriber.get(`liveRunText:${runId}`);
+
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ file, moves: [], text }));
+        client.send(
+          JSON.stringify({
+            file: lastEvent?.file,
+            language: lastEvent?.language,
+            moves: [],
+            text,
+          }),
+        );
       }
     };
 
@@ -29,7 +37,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
     client.on("message", sendText);
 
-    subscriber.subscribe(`liveRunMoves:${runId}`, (err, count) => {
+    subscriber.subscribe(`liveRunEvent:${runId}`, (err, count) => {
       if (err) {
         console.error("Failed to subscribe", err);
         client.close(1011, "Redis subscription failed");
@@ -38,9 +46,10 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
     subscriber.on("message", (channel, message) => {
       const data: LiveRunEvent = JSON.parse(message);
-      file = data.file;
+
+      lastEvent = data;
       if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ moves: data.moves, file, text: null }));
+        client.send(JSON.stringify({ ...data, text: null }));
       }
     });
   });

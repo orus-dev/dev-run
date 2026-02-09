@@ -42,7 +42,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
  * Remove a live run from Redis
  */
 export async function removeLiveRun(id: string) {
-  await redis.del(`liveRun:${id}`, `liveRunMoves:${id}`);
+  await redis.del(`liveRun:${id}`, `liveRunEvent:${id}`);
 }
 
 /** -------------------- Live Run Moves -------------------- */
@@ -50,9 +50,10 @@ export async function removeLiveRun(id: string) {
 /**
  * Add moves to a live run (ephemeral)
  */
-export async function addLiveRunMoves(
+export async function addLiveRunEvent(
   runId: string,
   file: string,
+  language: string,
   moves: LiveRunMove[],
 ) {
   const redis = new Redis();
@@ -62,7 +63,10 @@ export async function addLiveRunMoves(
   if (!runExists) throw "Invalid live run";
 
   // Publish the new moves to subscribers
-  await redis.publish(`liveRunMoves:${runId}`, JSON.stringify({ file, moves }));
+  await redis.publish(
+    `liveRunEvent:${runId}`,
+    JSON.stringify({ file, language, moves }),
+  );
 
   // Get the last text (from Redis)
   const lastText = (await redis.get(`liveRunText:${runId}`)) || "";

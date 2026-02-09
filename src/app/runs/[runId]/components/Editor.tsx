@@ -9,7 +9,7 @@ import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
 import { useEffect, useRef, useState } from "react";
-import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
+import { LiveRun, LiveRunEvent, LiveRunMove } from "@/modules/live-run/types";
 
 type Language =
   | "javascript"
@@ -20,7 +20,7 @@ type Language =
   | "java"
   | "json";
 
-function getLanguageExtension(lang: Language) {
+function getLanguageExtension(lang: Language | null) {
   switch (lang) {
     case "javascript":
       return javascript();
@@ -41,14 +41,15 @@ function getLanguageExtension(lang: Language) {
 
 export default function Editor({
   run,
-  setFile,
+  onEvent,
 }: {
   run: LiveRun | null | undefined;
-  setFile: (s: string | null) => void;
+  onEvent: (s: LiveRunEvent) => void;
 }) {
   const [editorView, setEditorView] = useState<EditorView>();
   const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
   const [text, setText] = useState("");
+  const [language, setLanguage] = useState<Language | null>(null);
 
   // WebSocket connection
   useEffect(() => {
@@ -61,13 +62,13 @@ export default function Editor({
     };
 
     ws.onmessage = (m) => {
-      const data: {
-        moves: LiveRunMove[];
-        file: string | null;
-        text: string | null;
-      } = JSON.parse(m.data);
+      const data: LiveRunEvent = JSON.parse(m.data);
 
-      setFile(data.file);
+      onEvent(data);
+
+      if (data.language !== language) {
+        setLanguage(data.language as Language);
+      }
 
       if (data.text) {
         setText(data.text);
@@ -104,7 +105,7 @@ export default function Editor({
       className="h-full w-full"
       value={text}
       extensions={[
-        getLanguageExtension("javascript"),
+        getLanguageExtension(language),
         EditorState.transactionFilter.of((tr) => {
           if (tr.selection && tr.isUserEvent("select")) {
             return [];

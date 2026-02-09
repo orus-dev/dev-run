@@ -4,11 +4,11 @@ import * as Core from "@/modules/live-run/core";
 import { getSession } from "@/modules/account/core";
 
 export async function POST(req: NextRequest) {
-  const { runId, moves, file } = await req.json();
+  const { runId, moves, file, language } = await req.json();
 
-  if (!runId || !moves || file === undefined)
+  if (!runId || !moves || file === undefined || language === undefined)
     return NextResponse.json(
-      { error: "body requires runId and moves and file" },
+      { error: "body requires runId, moves, file and language" },
       { status: 400 },
     );
 
@@ -27,9 +27,7 @@ export async function POST(req: NextRequest) {
       { status: 401 },
     );
 
-  console.log(moves, file);
-
-  const run = await Core.addLiveRunMoves(liveRun.id, file, moves);
+  const run = await Core.addLiveRunEvent(liveRun.id, file, language, moves);
 
   return NextResponse.json({ ok: true, run });
 }
