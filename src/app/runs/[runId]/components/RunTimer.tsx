@@ -4,7 +4,13 @@ import { LiveRun } from "@/modules/live-run/types";
 import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function RunTimer({ run }: { run: LiveRun }) {
+export default function RunTimer({
+  run,
+  views,
+}: {
+  run: LiveRun;
+  views: number | null;
+}) {
   const [time, setTime] = useState("00:00:00");
 
   useEffect(() => {
@@ -29,7 +35,7 @@ export default function RunTimer({ run }: { run: LiveRun }) {
           </p>
           <p className="text-muted-foreground flex gap-1 items-center">
             <Eye className="w-4 h-4" />
-            {run.views}
+            {views || run.views}
           </p>
         </span>
       </CardContent>

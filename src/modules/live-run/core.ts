@@ -4,7 +4,8 @@ import "server-only";
 import { LiveRun, LiveRunMove } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { redis } from "@/lib/redis";
-import { randomInt } from "crypto";
+import Redis from "ioredis";
+import { applyMoves } from "@/lib/move";
 
 /** -------------------- Live Runs in Redis -------------------- */
 
@@ -28,6 +29,29 @@ export async function getLiveRun(id: string): Promise<LiveRun | null> {
 }
 
 /**
+ * Get live run views from Redis
+ */
+export async function getLiveRunViews(id: string): Promise<number | null> {
+  const run = await getLiveRun(id);
+  if (!run) return null;
+  return run.views;
+}
+
+/**
+ * Get live run views from Redis
+ */
+export async function updateLiveRunViews(
+  id: string,
+  increment: number,
+): Promise<number | null> {
+  const run = await getLiveRun(id);
+  if (!run) return null;
+  run.views += increment;
+  await redis.set(`liveRun:${run.id}`, JSON.stringify(run));
+  return run.views;
+}
+
+/**
  * Get all live runs
  */
 export async function getLiveRuns(): Promise<LiveRun[]> {
@@ -41,7 +65,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
  * Remove a live run from Redis
  */
 export async function removeLiveRun(id: string) {
-  await redis.del(`liveRun:${id}`, `liveRunMoves:${id}`);
+  await redis.del(`liveRun:${id}`, `liveRunEvent:${id}`);
 }
 
 /** -------------------- Live Run Moves -------------------- */
@@ -49,28 +73,34 @@ export async function removeLiveRun(id: string) {
 /**
  * Add moves to a live run (ephemeral)
  */
-export async function addLiveRunMoves(id: string, moves: LiveRunMove[]) {
-  const runExists = await redis.exists(`liveRun:${id}`);
-  if (!runExists) throw new Error("Invalid run");
+export async function addLiveRunEvent(
+  runId: string,
+  file: string,
+  language: string,
+  moves: LiveRunMove[],
+) {
+  const redis = new Redis();
 
-  const pipeline = redis.pipeline();
-  moves.forEach((move) => {
-    pipeline.rpush(`liveRunMoves:${id}`, JSON.stringify(move));
-  });
+  // Make sure the live run exists
+  const runExists = await redis.exists(`liveRun:${runId}`);
+  if (!runExists) throw "Invalid live run";
 
-  setTimeout(() => {
-    redis.del(`liveRunMoves:${id}`);
-  }, 3000);
+  // Publish the new moves to subscribers
+  await redis.publish(
+    `liveRunEvent:${runId}`,
+    JSON.stringify({ file, language, moves }),
+  );
 
-  await pipeline.exec();
-}
+  // Get the last text (from Redis)
+  const lastText = (await redis.get(`liveRunText:${runId}`)) || "";
 
-/**
- * Get live moves for a run
- */
-export async function getLiveRunMoves(id: string): Promise<LiveRunMove[]> {
-  const moves = await redis.lrange(`liveRunMoves:${id}`, 0, -1);
-  return moves.map((m) => JSON.parse(m)) as LiveRunMove[];
+  // Apply the new moves to get the updated text
+  const updatedText = applyMoves(lastText, moves);
+
+  // Store the updated text back in Redis
+  await redis.set(`liveRunText:${runId}`, updatedText);
+
+  return updatedText;
 }
 
 /** -------------------- Submit Run -------------------- */

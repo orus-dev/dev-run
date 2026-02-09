@@ -6,7 +6,7 @@ import { signInWithGitHub } from "@/modules/account/actions";
 
 export default function ContinueWith() {
   const continueWithGithub = () => {
-    signInWithGitHub(window.location.origin);
+    signInWithGitHub();
   };
   const continueWithGoogle = () => {};
 

@@ -8,10 +8,10 @@ import { go } from "@codemirror/lang-go";
 import { json } from "@codemirror/lang-json";
 import { python } from "@codemirror/lang-python";
 import { java } from "@codemirror/lang-java";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { LiveRun, LiveRunEvent, LiveRunMove } from "@/modules/live-run/types";
 import useAction from "@/hook/use-action";
-import { getLiveRunMoves } from "@/modules/live-run/actions";
-import { LiveRun, LiveRunMove } from "@/modules/live-run/types";
+import { getOrigin } from "@/modules/getOrigin";
 
 type Language =
   | "javascript"
@@ -22,7 +22,7 @@ type Language =
   | "java"
   | "json";
 
-function getLanguageExtension(lang: Language) {
+function getLanguageExtension(lang: Language | null) {
   switch (lang) {
     case "javascript":
       return javascript();
@@ -41,76 +41,74 @@ function getLanguageExtension(lang: Language) {
   }
 }
 
-export default function Editor({ run }: { run: LiveRun | null | undefined }) {
+export default function Editor({
+  run,
+  onEvent,
+}: {
+  run: LiveRun | null | undefined;
+  onEvent: (s: LiveRunEvent) => void;
+}) {
+  const [origin] = useAction(getOrigin);
   const [editorView, setEditorView] = useState<EditorView>();
-  const [rawMoves] = useAction<LiveRunMove[]>(
-    async () => (run ? await getLiveRunMoves(run.id) : []),
-    [run],
-  );
+  const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
+  const [text, setText] = useState("");
+  const [language, setLanguage] = useState<Language | null>(null);
 
-  const [_, setLastMoveId] = useState<number>(-1);
-  const [moves, setMoves] = useState<LiveRunMove[]>([]);
-  const [movesLoading, setMovesLoading] = useState(false);
-
+  // WebSocket connection
   useEffect(() => {
-    if (!rawMoves || rawMoves.length === 0 || movesLoading) return;
+    if (!run || !origin?.host) return;
 
-    setLastMoveId((prevLastMoveId) => {
-      const newMoves = rawMoves.filter((move) => move.moveId > prevLastMoveId);
+    const ws = new WebSocket(`ws://${origin.host}/api/view-run`);
 
-      if (newMoves.length === 0) return prevLastMoveId;
+    ws.onopen = () => {
+      ws.send(run.id);
+    };
 
-      setMoves(newMoves);
+    ws.onmessage = (m) => {
+      const data: LiveRunEvent = JSON.parse(m.data);
 
-      return Math.max(...newMoves.map((m) => m.moveId));
-    });
-  }, [rawMoves, movesLoading]);
+      onEvent(data);
 
-  useEffect(() => {
-    if (!editorView || !moves) return;
+      if (data.language !== language) {
+        setLanguage(data.language as Language);
+      }
 
-    let cancelled = false;
+      if (data.text) {
+        setText(data.text);
+      }
 
-    const executeMove = async (move: LiveRunMove) => {
-      return new Promise<void>((resolve) => {
+      let cancelled = false;
+
+      data.moves.forEach((move) => {
         const timeout = setTimeout(() => {
-          if (!editorView || cancelled) return resolve();
+          if (!editorView || cancelled) return;
 
-          editorView.dispatch({
-            selection: { anchor: move.cursor },
-            scrollIntoView: true,
-            changes: move.changes,
-          });
-
-          resolve();
+          try {
+            editorView.dispatch({
+              selection: { anchor: move.cursor },
+              scrollIntoView: true,
+              changes: move.changes,
+            });
+          } catch {
+            cancelled = true;
+            ws.send("getText");
+          }
         }, move.latency);
 
-        return () => clearTimeout(timeout);
+        scheduledTimeouts.current.push(timeout);
       });
     };
 
-    (async () => {
-      if (!moves) return;
-      setMovesLoading(true);
-      for (const move of moves) {
-        if (cancelled) break;
-        await executeMove(move);
-      }
-      setMovesLoading(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [moves]);
+    return () => ws.close();
+  }, [run, ]);
 
   return (
     <CodeMirror
       readOnly
       className="h-full w-full"
-      value={``}
+      value={text}
       extensions={[
-        getLanguageExtension("javascript"),
+        getLanguageExtension(language),
         EditorState.transactionFilter.of((tr) => {
           if (tr.selection && tr.isUserEvent("select")) {
             return [];

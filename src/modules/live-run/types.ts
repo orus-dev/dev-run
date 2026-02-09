@@ -18,3 +18,10 @@ export interface LiveRunMove {
     insert: string;
   };
 }
+
+export interface LiveRunEvent {
+  moves: LiveRunMove[];
+  file: string | null;
+  language: string | null;
+  text: string | null;
+}
