@@ -29,6 +29,29 @@ export async function getLiveRun(id: string): Promise<LiveRun | null> {
 }
 
 /**
+ * Get live run views from Redis
+ */
+export async function getLiveRunViews(id: string): Promise<number | null> {
+  const run = await getLiveRun(id);
+  if (!run) return null;
+  return run.views;
+}
+
+/**
+ * Get live run views from Redis
+ */
+export async function updateLiveRunViews(
+  id: string,
+  increment: number,
+): Promise<number | null> {
+  const run = await getLiveRun(id);
+  if (!run) return null;
+  run.views += increment;
+  await redis.set(`liveRun:${run.id}`, JSON.stringify(run));
+  return run.views;
+}
+
+/**
  * Get all live runs
  */
 export async function getLiveRuns(): Promise<LiveRun[]> {

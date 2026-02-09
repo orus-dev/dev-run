@@ -7,7 +7,7 @@ import { FileTree } from "./components/FileTree";
 import { File } from "lucide-react";
 import Editor from "./components/Editor";
 import useAction, { useActionInterval } from "@/hook/use-action";
-import { getLiveRun } from "@/modules/live-run/actions";
+import { getLiveRun, getLiveRunViews } from "@/modules/live-run/actions";
 import ProblemCard from "@/app/problems/components/ProblemCard";
 import ProfileCard from "./components/ProfileCard";
 import { getProblem } from "@/modules/problems/actions";
@@ -18,6 +18,9 @@ export default function Run() {
   const params = useParams<{ runId: string }>();
 
   const [run] = useAction(() => getLiveRun(params.runId), [params]);
+  const [views] = useActionInterval(() => getLiveRunViews(params.runId), 2500, [
+    params,
+  ]);
 
   const [problem] = useAction(
     async () => (run?.id ? getProblem(run.problem) : null),
@@ -55,7 +58,7 @@ export default function Run() {
           </div>
 
           <div className="flex-1 animate-fade-in opacity-0 stagger-2">
-            {run && <RunTimer run={run} />}
+            {run && <RunTimer run={run} views={views} />}
           </div>
 
           <div className="flex-2">

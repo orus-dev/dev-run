@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import Redis from "ioredis";
 import { NextRequest, NextResponse } from "next/server";
 import { LiveRunEvent } from "@/modules/live-run/types";
+import { getLiveRun, updateLiveRunViews } from "@/modules/live-run/core";
 
 export function GET(req: NextRequest) {
   const headers = new Headers();
@@ -16,6 +17,9 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
   client.once("message", async (message) => {
     runId = message.toString();
+
+    await updateLiveRunViews(runId, 1);
+
     let lastEvent: LiveRunEvent | null = null;
 
     const sendText = async () => {
@@ -57,6 +61,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.once("close", async () => {
     if (runId) await subscriber.unsubscribe(`liveRun:${runId}`);
     subscriber.quit();
+    await updateLiveRunViews(runId, -1);
   });
 
   client.on("error", (err) => {
