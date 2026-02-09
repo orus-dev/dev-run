@@ -4,6 +4,7 @@ import "server-only";
 import { LiveRun, LiveRunMove } from "./types";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { redis } from "@/lib/redis";
+import Redis from "ioredis";
 
 /** -------------------- Live Runs in Redis -------------------- */
 
@@ -41,6 +42,22 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
  */
 export async function removeLiveRun(id: string) {
   await redis.del(`liveRun:${id}`, `liveRunMoves:${id}`);
+}
+
+/** -------------------- Live Run Moves -------------------- */
+
+/**
+ * Add moves to a live run (ephemeral)
+ */
+export async function addLiveRunMoves(runId: string, moves: LiveRunMove[]) {
+  const runExists = await redis.exists(`liveRun:${runId}`);
+
+  if (!runExists) throw "Invalid live run";
+
+  const publisher = new Redis();
+
+  // Send a message
+  await publisher.publish(`liveRunMoves:${runId}`, JSON.stringify(moves));
 }
 
 /** -------------------- Submit Run -------------------- */
