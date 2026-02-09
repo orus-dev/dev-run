@@ -42,6 +42,7 @@ function getLanguageExtension(lang: Language) {
 export default function Editor({ run }: { run: LiveRun | null | undefined }) {
   const [editorView, setEditorView] = useState<EditorView>();
   const scheduledTimeouts = useRef<NodeJS.Timeout[]>([]);
+  const [text, setText] = useState("");
 
   // WebSocket connection
   useEffect(() => {
@@ -54,17 +55,30 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
     };
 
     ws.onmessage = (m) => {
-      const data: LiveRunMove[] = JSON.parse(m.data);
+      const data: { moves: LiveRunMove[]; text: string | null } = JSON.parse(
+        m.data,
+      );
 
-      data.forEach((move) => {
+      if (data.text) {
+        setText(data.text);
+      }
+
+      let cancelled = false;
+
+      data.moves.forEach((move) => {
         const timeout = setTimeout(() => {
-          if (!editorView) return;
+          if (!editorView || cancelled) return;
 
-          editorView.dispatch({
-            selection: { anchor: move.cursor },
-            scrollIntoView: true,
-            changes: move.changes,
-          });
+          try {
+            editorView.dispatch({
+              selection: { anchor: move.cursor },
+              scrollIntoView: true,
+              changes: move.changes,
+            });
+          } catch {
+            cancelled = true;
+            ws.send("getText");
+          }
         }, move.latency);
 
         scheduledTimeouts.current.push(timeout);
@@ -78,7 +92,7 @@ export default function Editor({ run }: { run: LiveRun | null | undefined }) {
     <CodeMirror
       readOnly
       className="h-full w-full"
-      value={``}
+      value={text}
       extensions={[
         getLanguageExtension("javascript"),
         EditorState.transactionFilter.of((tr) => {

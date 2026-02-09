@@ -19,6 +19,15 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.once("message", (message) => {
     runId = message.toString();
 
+    const sendText = async () => {
+      const text = await subscriber.get(`liveRunText:${runId}`);
+      client.send(JSON.stringify({ moves: [], text }));
+    };
+
+    sendText();
+
+    client.on("message", sendText);
+
     subscriber.subscribe(`liveRunMoves:${runId}`, (err, count) => {
       if (err) {
         console.error("Failed to subscribe", err);
@@ -29,8 +38,9 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
     });
 
     subscriber.on("message", (channel, message) => {
+      const moves = JSON.parse(message);
       if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(JSON.stringify({ moves, text: null }));
       }
     });
   });
