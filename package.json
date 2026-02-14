@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "npm run build:lib && next build",
-    "postinstall": "npm run ws -- -y",
-    "ws": "npx --yes next-ws-cli@latest patch"
+    "build": "next build",
+    "start": "next start",
+    "dev": "next dev",
+    "postinstall": "next-ws patch"
   },
   "dependencies": {
     "@codemirror/lang-go": "^6.0.1",
