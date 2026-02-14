@@ -8,12 +8,12 @@ import { redirect } from "next/navigation";
 export async function signInWithGitHub() {
   const supabase = await createClient();
 
-  const { host, protocol } = await getOrigin();
+  const { httpOrigin } = await getOrigin();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${protocol}://${host}/api/auth/callback`,
+      redirectTo: `${httpOrigin}/api/auth/callback`,
     },
   });
 

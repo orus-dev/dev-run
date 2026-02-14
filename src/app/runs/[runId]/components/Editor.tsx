@@ -56,9 +56,9 @@ export default function Editor({
 
   // WebSocket connection
   useEffect(() => {
-    if (!run || !origin?.host) return;
+    if (!run || !origin?.wsOrigin) return;
 
-    const ws = new WebSocket(`ws://${origin.host}/api/view-run`);
+    const ws = new WebSocket(`${origin.wsOrigin}/api/view-run`);
 
     ws.onopen = () => {
       ws.send(run.id);
@@ -100,7 +100,7 @@ export default function Editor({
     };
 
     return () => ws.close();
-  }, [run, ]);
+  }, [run]);
 
   return (
     <CodeMirror

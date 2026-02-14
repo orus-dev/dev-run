@@ -5,7 +5,7 @@ import { getOrigin } from "@/lib/origin/server";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
-  const { protocol, host } = await getOrigin();
+  const { httpOrigin } = await getOrigin();
 
   if (!code) {
     return NextResponse.json({ error: "code param required" }, { status: 400 });
@@ -20,5 +20,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.redirect(`${protocol}://${host}/problems`);
+  return NextResponse.redirect(`${httpOrigin}/problems`);
 }

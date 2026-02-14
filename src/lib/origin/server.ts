@@ -1,7 +1,14 @@
-import { headers } from "next/headers";
 import "server-only";
 
-export async function getOrigin(): Promise<{ protocol: string; host: string }> {
+import { headers } from "next/headers";
+
+export async function getOrigin(): Promise<{
+  protocol: string;
+  host: string;
+  wsProtocol: string;
+  httpOrigin: string;
+  wsOrigin: string;
+}> {
   const h = await headers();
   const host = process.env.ORIGIN || h.get(":authority") || "localhost:3000";
   const protocol =
@@ -10,5 +17,13 @@ export async function getOrigin(): Promise<{ protocol: string; host: string }> {
     h.get(":scheme") ||
     "https";
 
-  return { protocol, host };
+  const wsProtocol = protocol === "https" ? "wss" : "ws";
+
+  return {
+    protocol,
+    host,
+    wsProtocol,
+    httpOrigin: `${protocol}://${host}`,
+    wsOrigin: `${wsProtocol}://${host}`,
+  };
 }
