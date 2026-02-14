@@ -79,8 +79,6 @@ export async function addLiveRunEvent(
   language: string,
   moves: LiveRunMove[],
 ) {
-  const redis = new Redis();
-
   // Make sure the live run exists
   const runExists = await redis.exists(`liveRun:${runId}`);
   if (!runExists) throw "Invalid live run";

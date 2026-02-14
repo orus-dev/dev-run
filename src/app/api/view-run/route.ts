@@ -12,7 +12,7 @@ export function GET(req: NextRequest) {
 }
 
 export function UPGRADE(client: WebSocket, server: WebSocketServer) {
-  const subscriber = new Redis();
+  const subscriber = new Redis(process.env.REDIS_URL!);
   let runId: string;
 
   client.once("message", async (message) => {
@@ -59,7 +59,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   });
 
   client.once("close", async () => {
-    if (runId) await subscriber.unsubscribe(`liveRun:${runId}`);
+    await subscriber.unsubscribe(`liveRunEvent:${runId}`);
     subscriber.quit();
     await updateLiveRunViews(runId, -1);
   });
