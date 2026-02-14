@@ -11,7 +11,7 @@ import { java } from "@codemirror/lang-java";
 import { useEffect, useRef, useState } from "react";
 import { LiveRun, LiveRunEvent, LiveRunMove } from "@/modules/live-run/types";
 import useAction from "@/hook/use-action";
-import { getOrigin } from "@/modules/getOrigin";
+import { getOrigin } from "@/lib/origin/client";
 
 type Language =
   | "javascript"
