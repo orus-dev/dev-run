@@ -109,6 +109,64 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
           break;
         }
 
+        case "move": {
+          const { runId, moves, file, language } = msg;
+
+          if (
+            !runId ||
+            !moves ||
+            file === undefined ||
+            language === undefined
+          ) {
+            client.send(
+              JSON.stringify({
+                ok: false,
+                error: "body requires runId, moves, file and language",
+              }),
+            );
+            return;
+          }
+
+          const supabase = await createClient();
+          const session = await getSession(supabase);
+
+          if (!session) {
+            client.send(
+              JSON.stringify({ ok: false, error: "Invalid session" }),
+            );
+            return;
+          }
+
+          const liveRun = await Core.getLiveRun(runId);
+
+          if (!liveRun) {
+            client.send(
+              JSON.stringify({
+                ok: false,
+                error: "Run is not live or does not exist",
+              }),
+            );
+            return;
+          }
+
+          const run = await Core.addLiveRunEvent(
+            liveRun.id,
+            file,
+            language,
+            moves,
+          );
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "move",
+              data: run,
+            }),
+          );
+
+          break;
+        }
+
         default:
           client.send(
             JSON.stringify({

@@ -1,3 +1,5 @@
+import { LiveRunMove } from "@/modules/live-run/types";
+
 export type ClientMessage =
   | {
       type: "create";
@@ -7,7 +9,9 @@ export type ClientMessage =
   | {
       type: "move";
       runId: string;
-      // moves, file, language
+      file: string;
+      language: string;
+      moves: LiveRunMove[];
     }
   | {
       type: "submit";
