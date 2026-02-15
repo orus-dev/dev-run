@@ -55,60 +55,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
           break;
         }
 
-        /* ---------------- SUBMIT ---------------- */
-        case "submit": {
-          const { runId } = msg;
-
-          if (!runId) {
-            client.send(JSON.stringify({ ok: false, error: "runId required" }));
-            return;
-          }
-
-          const liveRun = await Core.getLiveRun(runId);
-
-          if (!liveRun) {
-            client.send(
-              JSON.stringify({
-                ok: false,
-                error: "Run is not live or does not exist",
-              }),
-            );
-            return;
-          }
-
-          const run = await Core.submitRun(supabase, liveRun, session[0].id);
-
-          client.send(
-            JSON.stringify({
-              ok: true,
-              type: "submit",
-              data: run,
-            }),
-          );
-          break;
-        }
-
         /* ---------------- DELETE ---------------- */
-        case "delete": {
-          const { runId } = msg;
-
-          if (!runId) {
-            client.send(JSON.stringify({ ok: false, error: "runId required" }));
-            return;
-          }
-
-          const run = await Core.removeLiveRun(runId);
-
-          client.send(
-            JSON.stringify({
-              ok: true,
-              type: "delete",
-              data: run,
-            }),
-          );
-          break;
-        }
-
         case "move": {
           const { runId, moves, file, language } = msg;
 
@@ -164,6 +111,60 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             }),
           );
 
+          break;
+        }
+
+        /* ---------------- SUBMIT ---------------- */
+        case "submit": {
+          const { runId } = msg;
+
+          if (!runId) {
+            client.send(JSON.stringify({ ok: false, error: "runId required" }));
+            return;
+          }
+
+          const liveRun = await Core.getLiveRun(runId);
+
+          if (!liveRun) {
+            client.send(
+              JSON.stringify({
+                ok: false,
+                error: "Run is not live or does not exist",
+              }),
+            );
+            return;
+          }
+
+          const run = await Core.submitRun(supabase, liveRun, session[0].id);
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "submit",
+              data: run,
+            }),
+          );
+          break;
+        }
+
+        /* ---------------- DELETE ---------------- */
+        case "delete": {
+          const { runId } = msg;
+
+          if (!runId) {
+            client.send(JSON.stringify({ ok: false, error: "runId required" }));
+            return;
+          }
+
+          const run = await Core.removeLiveRun(runId);
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "delete",
+              data: run,
+            }),
+          );
           break;
         }
 
