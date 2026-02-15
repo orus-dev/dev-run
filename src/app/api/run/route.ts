@@ -1,80 +1,134 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import * as Core from "@/modules/live-run/core";
-import { getSession } from "@/modules/account/core";
+import { WebSocketServer, WebSocket } from "ws";
 import { randomUUID } from "crypto";
+import { createClient } from "@/lib/supabase/server";
+import { getSession } from "@/modules/account/core";
+import * as Core from "@/modules/live-run/core";
+import { ClientMessage } from "./types";
 
-export async function PUT(req: NextRequest) {
-  const { problem, category } = await req.json();
+export function UPGRADE(client: WebSocket, server: WebSocketServer) {
+  client.on("message", async (raw) => {
+    try {
+      const msg: ClientMessage = JSON.parse(raw.toString());
 
-  if (!problem || !category)
-    return NextResponse.json(
-      { error: "body requires problem and category" },
-      { status: 400 },
-    );
+      const supabase = await createClient();
+      const session = await getSession(supabase);
 
-  const supabase = await createClient();
+      if (!session) {
+        client.send(JSON.stringify({ ok: false, error: "Invalid session" }));
+        return;
+      }
 
-  const session = await getSession(supabase);
+      switch (msg.type) {
+        /* ---------------- CREATE ---------------- */
+        case "create": {
+          const { problem, category } = msg;
 
-  if (!session)
-    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+          if (!problem || !category) {
+            client.send(
+              JSON.stringify({
+                ok: false,
+                error: "problem and category required",
+              }),
+            );
+            return;
+          }
 
-  const runId = randomUUID();
+          const runId = randomUUID();
 
-  await Core.addLiveRun({
-    problem,
-    category,
-    id: runId,
-    username: session[1].username,
-    views: 0,
-    start: new Date().getTime(),
-    runsCount: 0,
+          await Core.addLiveRun({
+            id: runId,
+            problem,
+            category,
+            username: session[1].username,
+            views: 0,
+            start: Date.now(),
+            runsCount: 0,
+          });
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "create",
+              data: { runId },
+            }),
+          );
+          break;
+        }
+
+        /* ---------------- SUBMIT ---------------- */
+        case "submit": {
+          const { runId } = msg;
+
+          if (!runId) {
+            client.send(JSON.stringify({ ok: false, error: "runId required" }));
+            return;
+          }
+
+          const liveRun = await Core.getLiveRun(runId);
+
+          if (!liveRun) {
+            client.send(
+              JSON.stringify({
+                ok: false,
+                error: "Run is not live or does not exist",
+              }),
+            );
+            return;
+          }
+
+          const run = await Core.submitRun(supabase, liveRun, session[0].id);
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "submit",
+              data: run,
+            }),
+          );
+          break;
+        }
+
+        /* ---------------- DELETE ---------------- */
+        case "delete": {
+          const { runId } = msg;
+
+          if (!runId) {
+            client.send(JSON.stringify({ ok: false, error: "runId required" }));
+            return;
+          }
+
+          const run = await Core.removeLiveRun(runId);
+
+          client.send(
+            JSON.stringify({
+              ok: true,
+              type: "delete",
+              data: run,
+            }),
+          );
+          break;
+        }
+
+        default:
+          client.send(
+            JSON.stringify({
+              ok: false,
+              error: "Unknown message type",
+            }),
+          );
+      }
+    } catch (err) {
+      console.error(err);
+      client.send(
+        JSON.stringify({
+          ok: false,
+          error: "Malformed message",
+        }),
+      );
+    }
   });
 
-  return NextResponse.json({ ok: true, runId });
-}
-
-export async function POST(req: NextRequest) {
-  const { runId } = await req.json();
-
-  if (!runId)
-    return NextResponse.json({ error: "body requires runId" }, { status: 400 });
-
-  const supabase = await createClient();
-
-  const session = await getSession(supabase);
-
-  if (!session)
-    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
-
-  const liveRun = await Core.getLiveRun(runId);
-
-  if (!liveRun)
-    return NextResponse.json(
-      { error: "Run is not live or does not exist" },
-      { status: 401 },
-    );
-
-  const run = await Core.submitRun(supabase, liveRun, session[0].id);
-
-  return NextResponse.json({ ok: true, run });
-}
-
-export async function DELETE(req: NextRequest) {
-  const runId = req.nextUrl.searchParams.get("runId");
-
-  if (!runId)
-    return NextResponse.json({ error: "missing ?runId=" }, { status: 400 });
-
-  const supabase = await createClient();
-
-  const session = await getSession(supabase);
-
-  if (!session)
-    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
-
-  const run = await Core.removeLiveRun(runId);
-
-  return NextResponse.json({ ok: true, run });
+  client.on("close", () => {
+    // optional cleanup
+  });
 }
