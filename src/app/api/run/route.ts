@@ -23,7 +23,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
       client.send(JSON.stringify({ ok: false, error: "Missing cookies" }));
       client.close();
       return;
-    }
+    };
 
     const supabase = await createClientCookie(new Map(Object.entries(cookies)));
     const session = await getSession(supabase);
