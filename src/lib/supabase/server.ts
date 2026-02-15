@@ -27,22 +27,20 @@ export async function createClient() {
   );
 }
 
-export async function createClientApi() {
-  const cookieStore = await cookies();
-
+export async function createClientCookie(cookies: Map<string, string>) {
   return createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_SECRET_KEY!,
     {
       cookies: {
         get(name: string) {
-          return cookieStore.get(name)?.value;
+          return cookies.get(name) || null;
         },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set(name, value, options);
+        set(name: string, value: string) {
+          cookies.set(name, value);
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.set(name, "", options);
+          cookies.delete(name);
         },
       },
     },
