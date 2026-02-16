@@ -9,6 +9,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import useAction from "@/hook/use-action";
 import { getProblems } from "@/modules/problems/actions";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function Problems() {
   const [problems] = useAction(getProblems);
@@ -16,7 +17,7 @@ export default function Problems() {
   useEffect(() => {
     (async () => {
       await axios.post("http://127.0.0.1:63780/auth", {
-        saveCookies: document.cookie,
+        saveCookies: Cookies.get(),
       });
     })().catch(() => {});
   }, []);
