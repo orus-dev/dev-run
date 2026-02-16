@@ -2,7 +2,8 @@ import { WebSocketServer, WebSocket } from "ws";
 import Redis from "ioredis";
 import { NextRequest, NextResponse } from "next/server";
 import { LiveRunEvent } from "@/modules/live-run/types";
-import { getLiveRun, updateLiveRunViews } from "@/modules/live-run/core";
+import { updateLiveRunViews } from "@/modules/live-run/core";
+import { redis } from "@/lib/redis";
 
 export function GET(req: NextRequest) {
   const headers = new Headers();
@@ -23,7 +24,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
     let lastEvent: LiveRunEvent | null = null;
 
     const sendText = async () => {
-      const text = await subscriber.get(`liveRunText:${runId}`);
+      const text = await redis.get(`liveRunText:${runId}`);
 
       if (client.readyState === WebSocket.OPEN) {
         client.send(

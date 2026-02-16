@@ -5,6 +5,7 @@ import { getSession } from "@/modules/account/core";
 import * as Core from "@/modules/live-run/core";
 import { ClientMessage } from "./types";
 import { NextRequest } from "next/server";
+import { redis } from "@/lib/redis";
 
 export function GET(req: NextRequest) {
   const headers = new Headers();
@@ -203,6 +204,19 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             );
             break;
           }
+
+          case "getText":
+            const { runId } = msg;
+            const data = await redis.get(`liveRunText:${runId}`);
+
+            client.send(
+              JSON.stringify({
+                requestId,
+                ok: true,
+                data,
+              }),
+            );
+            break;
 
           default:
             client.send(

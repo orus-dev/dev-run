@@ -21,6 +21,10 @@ export type ClientMessage = { requestId: string } & (
       type: "delete";
       runId: string;
     }
+  | {
+      type: "getText";
+      runId: string;
+    }
 );
 
 export type ServerMessage =
