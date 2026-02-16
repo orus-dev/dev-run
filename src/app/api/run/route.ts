@@ -15,7 +15,10 @@ export function GET(req: NextRequest) {
 
 export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.once("message", async (raw) => {
-    const { cookies }: { cookies: Record<string, string> } = JSON.parse(
+    const {
+      cookies,
+      requestId,
+    }: { cookies: Record<string, string>; requestId: string } = JSON.parse(
       raw.toString(),
     );
 
@@ -33,11 +36,13 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
       return;
     }
 
-    client.send(JSON.stringify({ ok: true }));
+    client.send(JSON.stringify({ requestId, ok: true }));
+
+    console.log(`User ${session[1].username} connected to live run`);
 
     client.on("message", async (raw) => {
       try {
-        const msg: ClientMessage = JSON.parse(raw.toString());
+        const { requestId, ...msg }: ClientMessage = JSON.parse(raw.toString());
 
         switch (msg.type) {
           /* ---------------- CREATE ---------------- */
@@ -47,6 +52,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             if (!problem || !category) {
               client.send(
                 JSON.stringify({
+                  requestId,
                   ok: false,
                   error: "problem and category required",
                 }),
@@ -68,6 +74,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             client.send(
               JSON.stringify({
+                requestId,
                 ok: true,
                 type: "create",
                 data: { runId },
@@ -88,6 +95,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             ) {
               client.send(
                 JSON.stringify({
+                  requestId,
                   ok: false,
                   error: "body requires runId, moves, file and language",
                 }),
@@ -100,6 +108,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             if (!liveRun) {
               client.send(
                 JSON.stringify({
+                  requestId,
                   ok: false,
                   error: "Run is not live or does not exist",
                 }),
@@ -116,6 +125,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             client.send(
               JSON.stringify({
+                requestId,
                 ok: true,
                 type: "move",
                 data: run,
@@ -131,7 +141,11 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             if (!runId) {
               client.send(
-                JSON.stringify({ ok: false, error: "runId required" }),
+                JSON.stringify({
+                  requestId,
+                  ok: false,
+                  error: "runId required",
+                }),
               );
               return;
             }
@@ -141,6 +155,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             if (!liveRun) {
               client.send(
                 JSON.stringify({
+                  requestId,
                   ok: false,
                   error: "Run is not live or does not exist",
                 }),
@@ -152,6 +167,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             client.send(
               JSON.stringify({
+                requestId,
                 ok: true,
                 type: "submit",
                 data: run,
@@ -166,7 +182,11 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             if (!runId) {
               client.send(
-                JSON.stringify({ ok: false, error: "runId required" }),
+                JSON.stringify({
+                  requestId,
+                  ok: false,
+                  error: "runId required",
+                }),
               );
               return;
             }
@@ -175,6 +195,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
             client.send(
               JSON.stringify({
+                requestId,
                 ok: true,
                 type: "delete",
                 data: run,
@@ -186,6 +207,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
           default:
             client.send(
               JSON.stringify({
+                requestId,
                 ok: false,
                 error: "Unknown message type",
               }),
@@ -195,6 +217,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
         console.error(err);
         client.send(
           JSON.stringify({
+            requestId,
             ok: false,
             error: "Malformed message",
           }),

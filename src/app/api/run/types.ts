@@ -1,6 +1,6 @@
 import { LiveRunMove } from "@/modules/live-run/types";
 
-export type ClientMessage =
+export type ClientMessage = { requestId: string } & (
   | {
       type: "create";
       problem: string;
@@ -20,7 +20,8 @@ export type ClientMessage =
   | {
       type: "delete";
       runId: string;
-    };
+    }
+);
 
 export type ServerMessage =
   | { ok: true; type: string; data?: any }
