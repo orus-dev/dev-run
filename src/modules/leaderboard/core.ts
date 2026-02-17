@@ -1,7 +1,6 @@
-"use server";
+import "server-only";
 
 import { SupabaseClient } from "@supabase/supabase-js";
-import "server-only";
 import { LeaderboardUser } from "./types";
 
 export async function getGlobalLeaderboard(

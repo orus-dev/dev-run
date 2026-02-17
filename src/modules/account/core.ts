@@ -1,7 +1,6 @@
-"use server";
+import "server-only";
 
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import "server-only";
 import { UserProfile } from "../user/types";
 
 export async function signInWithGitHub(supabase: SupabaseClient) {
