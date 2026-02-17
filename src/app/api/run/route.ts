@@ -4,264 +4,221 @@ import { createClientCookie } from "@/lib/supabase/server";
 import { getSession } from "@/modules/account/core";
 import * as Core from "@/modules/live-run/core";
 import { ClientMessage } from "./types";
-import { NextRequest } from "next/server";
 import { redis } from "@/lib/redis";
+import { User } from "@supabase/supabase-js";
+import { UserProfile } from "@/modules/user/types";
+import { NextRequest } from "next/server";
 
 export function UPGRADE(client: WebSocket, server: WebSocketServer) {
-  client.once("message", async (raw) => {
-    const {
-      cookies,
-      requestId,
-    }: { cookies: Record<string, string>; requestId: string } = JSON.parse(
-      raw.toString(),
-    );
+  let authenticated = false;
+  let session: [User, UserProfile] | null = null;
+  let currentRun: string | undefined;
 
-    if (!cookies) {
-      client.send(JSON.stringify({ ok: false, error: "Missing cookies" }));
+  const closeClient = (reason?: string) => {
+    if (reason) console.warn("Closing client:", reason);
+    try {
       client.close();
-      return;
-    }
+      // force close after 1s if still open
+      setTimeout(() => {
+        if (client.readyState !== WebSocket.CLOSED) client.terminate();
+      }, 1000);
+    } catch {}
+  };
 
-    const supabase = await createClientCookie(new Map(Object.entries(cookies)));
-    const session = await getSession(supabase);
+  client.on("message", async (raw) => {
+    let requestId: string | undefined;
 
-    if (!session) {
-      client.send(JSON.stringify({ ok: false, error: "Invalid session" }));
-      return;
-    }
+    try {
+      const msg = JSON.parse(raw.toString());
+      requestId = msg.requestId;
 
-    client.send(JSON.stringify({ requestId, ok: true }));
+      // ---------------- AUTHENTICATION ----------------
+      if (!authenticated) {
+        const { cookies } = msg as { cookies?: Record<string, string> };
+        if (!cookies) return closeClient("Missing cookies");
 
-    let currentRun: string | undefined;
+        // Await the session
+        const supabase = await createClientCookie(
+          new Map(Object.entries(cookies)),
+        );
+        session = await getSession(supabase);
 
-    client.on("message", async (raw) => {
-      try {
-        const { requestId, ...msg }: ClientMessage = JSON.parse(raw.toString());
+        if (!session) return closeClient("Invalid session");
 
-        switch (msg.type) {
-          /* ---------------- CREATE ---------------- */
-          case "create": {
-            const { problem, category } = msg;
+        authenticated = true;
+        return client.send(JSON.stringify({ requestId, ok: true }));
+      }
 
-            if (!problem || !category) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "problem and category required",
-                }),
-              );
-              return;
-            }
+      if (!session) return closeClient("Session unexpectedly null");
 
-            if (currentRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error:
-                    "Cannot do multiple runs at a time, please delete or submit the current run",
-                }),
-              );
-              return;
-            }
+      // ---------------- POST-AUTH MESSAGE HANDLING ----------------
+      const { type, ...payload } = msg as ClientMessage;
 
-            const runId = randomUUID();
-
-            await Core.addLiveRun({
-              id: runId,
-              problem,
-              category,
-              username: session[1].username,
-              views: 0,
-              start: Date.now(),
-              runsCount: 0,
-            });
-
-            client.send(
-              JSON.stringify({
-                requestId,
-                ok: true,
-                type: "create",
-                data: { runId },
-              }),
-            );
-            break;
-          }
-
-          /* ---------------- DELETE ---------------- */
-          case "move": {
-            const { moves, file, language } = msg;
-
-            if (!currentRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "No current run, please create a run first",
-                }),
-              );
-              return;
-            }
-
-            if (!moves || file === undefined || language === undefined) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "body requires runId, moves, file and language",
-                }),
-              );
-              return;
-            }
-
-            const liveRun = await Core.getLiveRun(currentRun);
-
-            if (!liveRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "Run is not live or does not exist",
-                }),
-              );
-              return;
-            }
-
-            const run = await Core.addLiveRunEvent(
-              liveRun.id,
-              file,
-              language,
-              moves,
-            );
-
-            client.send(
-              JSON.stringify({
-                requestId,
-                ok: true,
-                type: "move",
-                data: run,
-              }),
-            );
-
-            break;
-          }
-
-          /* ---------------- SUBMIT ---------------- */
-          case "submit": {
-            if (!currentRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "No current run, please create a run first",
-                }),
-              );
-              return;
-            }
-
-            const liveRun = await Core.getLiveRun(currentRun);
-
-            if (!liveRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "Run is not live or does not exist",
-                }),
-              );
-              return;
-            }
-
-            const run = await Core.submitRun(supabase, liveRun, session[0].id);
-
-            client.send(
-              JSON.stringify({
-                requestId,
-                ok: true,
-                type: "submit",
-                data: run,
-              }),
-            );
-            break;
-          }
-
-          /* ---------------- DELETE ---------------- */
-          case "delete": {
-            if (!currentRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "No current run, please create a run first",
-                }),
-              );
-              return;
-            }
-
-            const run = await Core.removeLiveRun(currentRun);
-
-            client.send(
-              JSON.stringify({
-                requestId,
-                ok: true,
-                type: "delete",
-                data: run,
-              }),
-            );
-            break;
-          }
-
-          case "getText":
-            if (!currentRun) {
-              client.send(
-                JSON.stringify({
-                  requestId,
-                  ok: false,
-                  error: "No current run, please create a run first",
-                }),
-              );
-              return;
-            }
-
-            const data = await redis.get(`liveRunText:${currentRun}`);
-
-            client.send(
-              JSON.stringify({
-                requestId,
-                ok: true,
-                data,
-              }),
-            );
-            break;
-
-          default:
-            client.send(
+      switch (type) {
+        case "create": {
+          const { problem, category } = payload as any;
+          if (!problem || !category) {
+            return client.send(
               JSON.stringify({
                 requestId,
                 ok: false,
-                error: "Unknown message type",
+                error: "problem and category required",
               }),
             );
+          }
+          if (currentRun) {
+            return client.send(
+              JSON.stringify({
+                requestId,
+                ok: false,
+                error:
+                  "Cannot do multiple runs, delete/submit current run first",
+              }),
+            );
+          }
+
+          const runId = randomUUID();
+          await Core.addLiveRun({
+            id: runId,
+            problem,
+            category,
+            username: session[1].username,
+            views: 0,
+            start: Date.now(),
+            runsCount: 0,
+          });
+
+          currentRun = runId;
+
+          return client.send(
+            JSON.stringify({
+              requestId,
+              ok: true,
+              type: "create",
+              data: { runId },
+            }),
+          );
         }
-      } catch (err) {
-        console.error(err);
+
+        case "move": {
+          if (!currentRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "No current run" }),
+            );
+          const { moves, file, language } = payload as any;
+          if (!moves || file === undefined || language === undefined) {
+            return client.send(
+              JSON.stringify({
+                requestId,
+                ok: false,
+                error: "moves, file, and language required",
+              }),
+            );
+          }
+
+          const liveRun = await Core.getLiveRun(currentRun);
+          if (!liveRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "Run not live" }),
+            );
+
+          const run = await Core.addLiveRunEvent(
+            liveRun.id,
+            file,
+            language,
+            moves,
+          );
+
+          return client.send(
+            JSON.stringify({ requestId, ok: true, type: "move", data: run }),
+          );
+        }
+
+        case "submit": {
+          if (!currentRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "No current run" }),
+            );
+
+          const liveRun = await Core.getLiveRun(currentRun);
+          if (!liveRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "Run not live" }),
+            );
+
+          const run = await Core.submitRun(liveRun, session[0].id);
+          currentRun = undefined;
+
+          return client.send(
+            JSON.stringify({ requestId, ok: true, type: "submit", data: run }),
+          );
+        }
+
+        case "delete": {
+          if (!currentRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "No current run" }),
+            );
+
+          await Core.removeLiveRun(currentRun);
+          const deletedRun = currentRun;
+          currentRun = undefined;
+
+          return client.send(
+            JSON.stringify({
+              requestId,
+              ok: true,
+              type: "delete",
+              data: { id: deletedRun },
+            }),
+          );
+        }
+
+        case "getText": {
+          if (!currentRun)
+            return client.send(
+              JSON.stringify({ requestId, ok: false, error: "No current run" }),
+            );
+
+          const data = await redis.get(`liveRunText:${currentRun}`);
+          return client.send(JSON.stringify({ requestId, ok: true, data }));
+        }
+
+        default:
+          return client.send(
+            JSON.stringify({
+              requestId,
+              ok: false,
+              error: "Unknown message type",
+            }),
+          );
+      }
+    } catch (err) {
+      console.error(err);
+      if (requestId) {
         client.send(
-          JSON.stringify({
-            requestId,
-            ok: false,
-            error: "Malformed message",
-          }),
+          JSON.stringify({ requestId, ok: false, error: "Malformed message" }),
         );
       }
-    });
+      closeClient("Malformed message");
+    }
+  });
 
-    client.on("close", async () => {
-      if (!currentRun) return;
+  client.on("close", async () => {
+    console.log("WebSocket closed, cleaning up run:", currentRun);
+    if (currentRun) {
+      try {
+        await Core.removeLiveRun(currentRun);
+      } catch (err) {
+        console.error("Error cleaning up run on close:", err);
+      }
+      currentRun = undefined;
+    }
+  });
 
-      Core.removeLiveRun(currentRun);
-      await redis.del(`liveRunText:${currentRun}`);
-    });
+  client.on("error", (err) => {
+    console.error("WebSocket error:", err);
+    closeClient("WebSocket error");
   });
 }
 

@@ -1,9 +1,8 @@
-"use server";
-
 import "server-only";
 
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createClient as createSimpleClient } from "@supabase/supabase-js";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -46,3 +45,8 @@ export async function createClientCookie(cookies: Map<string, string>) {
     },
   );
 }
+
+export const supabaseApiClient = createSimpleClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SECRET_KEY!,
+);
