@@ -16,7 +16,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
   // Heartbeat
   let isAlive = true;
-  const heartbeatInterval = 15000;
   const heartbeat = setInterval(() => {
     if (!isAlive) {
       console.log("Client did not respond to ping, terminating");
@@ -24,7 +23,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
     }
     isAlive = false;
     if (client.readyState === WebSocket.OPEN) client.ping();
-  }, heartbeatInterval);
+  }, 15000);
 
   client.on("pong", () => {
     isAlive = true;
