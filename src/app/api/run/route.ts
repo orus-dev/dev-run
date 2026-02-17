@@ -32,7 +32,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
     client.send(JSON.stringify({ requestId, ok: true }));
 
-    console.log(`User ${session[1].username} connected to live run`);
+    let currentRun: string | undefined;
 
     client.on("message", async (raw) => {
       try {
@@ -49,6 +49,18 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
                   requestId,
                   ok: false,
                   error: "problem and category required",
+                }),
+              );
+              return;
+            }
+
+            if (currentRun) {
+              client.send(
+                JSON.stringify({
+                  requestId,
+                  ok: false,
+                  error:
+                    "Cannot do multiple runs at a time, please delete or submit the current run",
                 }),
               );
               return;
@@ -79,14 +91,20 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
           /* ---------------- DELETE ---------------- */
           case "move": {
-            const { runId, moves, file, language } = msg;
+            const { moves, file, language } = msg;
 
-            if (
-              !runId ||
-              !moves ||
-              file === undefined ||
-              language === undefined
-            ) {
+            if (!currentRun) {
+              client.send(
+                JSON.stringify({
+                  requestId,
+                  ok: false,
+                  error: "No current run, please create a run first",
+                }),
+              );
+              return;
+            }
+
+            if (!moves || file === undefined || language === undefined) {
               client.send(
                 JSON.stringify({
                   requestId,
@@ -97,7 +115,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
               return;
             }
 
-            const liveRun = await Core.getLiveRun(runId);
+            const liveRun = await Core.getLiveRun(currentRun);
 
             if (!liveRun) {
               client.send(
@@ -131,20 +149,18 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
           /* ---------------- SUBMIT ---------------- */
           case "submit": {
-            const { runId } = msg;
-
-            if (!runId) {
+            if (!currentRun) {
               client.send(
                 JSON.stringify({
                   requestId,
                   ok: false,
-                  error: "runId required",
+                  error: "No current run, please create a run first",
                 }),
               );
               return;
             }
 
-            const liveRun = await Core.getLiveRun(runId);
+            const liveRun = await Core.getLiveRun(currentRun);
 
             if (!liveRun) {
               client.send(
@@ -172,20 +188,18 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
           /* ---------------- DELETE ---------------- */
           case "delete": {
-            const { runId } = msg;
-
-            if (!runId) {
+            if (!currentRun) {
               client.send(
                 JSON.stringify({
                   requestId,
                   ok: false,
-                  error: "runId required",
+                  error: "No current run, please create a run first",
                 }),
               );
               return;
             }
 
-            const run = await Core.removeLiveRun(runId);
+            const run = await Core.removeLiveRun(currentRun);
 
             client.send(
               JSON.stringify({
@@ -199,8 +213,18 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
           }
 
           case "getText":
-            const { runId } = msg;
-            const data = await redis.get(`liveRunText:${runId}`);
+            if (!currentRun) {
+              client.send(
+                JSON.stringify({
+                  requestId,
+                  ok: false,
+                  error: "No current run, please create a run first",
+                }),
+              );
+              return;
+            }
+
+            const data = await redis.get(`liveRunText:${currentRun}`);
 
             client.send(
               JSON.stringify({
@@ -231,10 +255,13 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
         );
       }
     });
-  });
 
-  client.on("close", () => {
-    // optional cleanup
+    client.on("close", async () => {
+      if (!currentRun) return;
+
+      Core.removeLiveRun(currentRun);
+      await redis.del(`liveRunText:${currentRun}`);
+    });
   });
 }
 
