@@ -7,13 +7,6 @@ import { ClientMessage } from "./types";
 import { NextRequest } from "next/server";
 import { redis } from "@/lib/redis";
 
-export function GET(req: NextRequest) {
-  const headers = new Headers();
-  headers.set("Connection", "Upgrade");
-  headers.set("Upgrade", "websocket");
-  return new Response("Upgrade Required", { status: 426, headers });
-}
-
 export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.once("message", async (raw) => {
     const {
@@ -243,4 +236,11 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   client.on("close", () => {
     // optional cleanup
   });
+}
+
+export function GET(req: NextRequest) {
+  const headers = new Headers();
+  headers.set("Connection", "Upgrade");
+  headers.set("Upgrade", "websocket");
+  return new Response("Upgrade Required", { status: 426, headers });
 }
