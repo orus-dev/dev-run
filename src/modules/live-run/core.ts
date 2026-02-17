@@ -46,6 +46,7 @@ export async function updateLiveRunViews(
 ): Promise<number | null> {
   const run = await getLiveRun(id);
   if (!run) return null;
+  if (run.views === 0 && increment < 0) return null;
   run.views += increment;
   await redis.set(`liveRun:${run.id}`, JSON.stringify(run));
   return run.views;
