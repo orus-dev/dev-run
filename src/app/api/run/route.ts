@@ -14,15 +14,41 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
   let session: [User, UserProfile] | null = null;
   let currentRun: string | undefined;
 
+  // Heartbeat
+  let isAlive = true;
+  const heartbeatInterval = 15000;
+  const heartbeat = setInterval(() => {
+    if (!isAlive) {
+      console.log("Client did not respond to ping, terminating");
+      return closeClient("Heartbeat timeout");
+    }
+    isAlive = false;
+    if (client.readyState === WebSocket.OPEN) client.ping();
+  }, heartbeatInterval);
+
+  client.on("pong", () => {
+    isAlive = true;
+  });
+
   const closeClient = (reason?: string) => {
     if (reason) console.warn("Closing client:", reason);
     try {
       client.close();
-      // force close after 1s if still open
       setTimeout(() => {
         if (client.readyState !== WebSocket.CLOSED) client.terminate();
       }, 1000);
     } catch {}
+  };
+
+  const cleanupRun = async () => {
+    if (currentRun) {
+      try {
+        await Core.removeLiveRun(currentRun);
+      } catch (err) {
+        console.error("Error cleaning up run:", err);
+      }
+      currentRun = undefined;
+    }
   };
 
   client.on("message", async (raw) => {
@@ -32,17 +58,15 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
       const msg = JSON.parse(raw.toString());
       requestId = msg.requestId;
 
-      // ---------------- AUTHENTICATION ----------------
+      // AUTHENTICATION
       if (!authenticated) {
         const { cookies } = msg as { cookies?: Record<string, string> };
         if (!cookies) return closeClient("Missing cookies");
 
-        // Await the session
         const supabase = await createClientCookie(
           new Map(Object.entries(cookies)),
         );
         session = await getSession(supabase);
-
         if (!session) return closeClient("Invalid session");
 
         authenticated = true;
@@ -51,13 +75,13 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
       if (!session) return closeClient("Session unexpectedly null");
 
-      // ---------------- POST-AUTH MESSAGE HANDLING ----------------
+      // POST-AUTH MESSAGE HANDLING
       const { type, ...payload } = msg as ClientMessage;
 
       switch (type) {
         case "create": {
           const { problem, category } = payload as any;
-          if (!problem || !category) {
+          if (!problem || !category)
             return client.send(
               JSON.stringify({
                 requestId,
@@ -65,8 +89,7 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
                 error: "problem and category required",
               }),
             );
-          }
-          if (currentRun) {
+          if (currentRun)
             return client.send(
               JSON.stringify({
                 requestId,
@@ -75,7 +98,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
                   "Cannot do multiple runs, delete/submit current run first",
               }),
             );
-          }
 
           const runId = randomUUID();
           await Core.addLiveRun({
@@ -89,7 +111,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
           });
 
           currentRun = runId;
-
           return client.send(
             JSON.stringify({
               requestId,
@@ -105,8 +126,9 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             return client.send(
               JSON.stringify({ requestId, ok: false, error: "No current run" }),
             );
+
           const { moves, file, language } = payload as any;
-          if (!moves || file === undefined || language === undefined) {
+          if (!moves || file === undefined || language === undefined)
             return client.send(
               JSON.stringify({
                 requestId,
@@ -114,7 +136,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
                 error: "moves, file, and language required",
               }),
             );
-          }
 
           const liveRun = await Core.getLiveRun(currentRun);
           if (!liveRun)
@@ -128,7 +149,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
             language,
             moves,
           );
-
           return client.send(
             JSON.stringify({ requestId, ok: true, type: "move", data: run }),
           );
@@ -148,7 +168,6 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
 
           const run = await Core.submitRun(liveRun, session[0].id);
           currentRun = undefined;
-
           return client.send(
             JSON.stringify({ requestId, ok: true, type: "submit", data: run }),
           );
@@ -160,16 +179,13 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
               JSON.stringify({ requestId, ok: false, error: "No current run" }),
             );
 
-          await Core.removeLiveRun(currentRun);
-          const deletedRun = currentRun;
-          currentRun = undefined;
-
+          await cleanupRun();
           return client.send(
             JSON.stringify({
               requestId,
               ok: true,
               type: "delete",
-              data: { id: deletedRun },
+              data: { id: currentRun },
             }),
           );
         }
@@ -195,29 +211,22 @@ export function UPGRADE(client: WebSocket, server: WebSocketServer) {
       }
     } catch (err) {
       console.error(err);
-      if (requestId) {
+      if (requestId)
         client.send(
           JSON.stringify({ requestId, ok: false, error: "Malformed message" }),
         );
-      }
       closeClient("Malformed message");
     }
   });
 
   client.on("close", async () => {
-    console.log("WebSocket closed, cleaning up run:", currentRun);
-    if (currentRun) {
-      try {
-        await Core.removeLiveRun(currentRun);
-      } catch (err) {
-        console.error("Error cleaning up run on close:", err);
-      }
-      currentRun = undefined;
-    }
+    clearInterval(heartbeat);
+    await cleanupRun();
   });
 
   client.on("error", (err) => {
     console.error("WebSocket error:", err);
+    clearInterval(heartbeat);
     closeClient("WebSocket error");
   });
 }
