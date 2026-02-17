@@ -78,9 +78,9 @@ export default function Leaderboard() {
                 {/* Runner / Username */}
                 <TableHead className="py-4 px-4 text-left">Runner</TableHead>
 
-                {/* Wins */}
+                {/* World Records */}
                 <TableHead className="py-4 px-4 w-24 text-center">
-                  Wins
+                  World Records
                 </TableHead>
 
                 {/* Podiums */}

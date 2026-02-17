@@ -1,6 +1,5 @@
-"use server";
-
 import "server-only";
+
 import { Problem, ProblemDefinition } from "./types";
 
 const problems: ProblemDefinition[] = [

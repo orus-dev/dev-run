@@ -1,71 +1,74 @@
+// ws/liveRun.ts
 import { WebSocketServer, WebSocket } from "ws";
-import Redis from "ioredis";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { LiveRunEvent } from "@/modules/live-run/types";
 import { updateLiveRunViews } from "@/modules/live-run/core";
-import { redis } from "@/lib/redis";
+import { redis, redisSubscriber } from "@/lib/redis";
 
-export function GET(req: NextRequest) {
-  const headers = new Headers();
-  headers.set("Connection", "Upgrade");
-  headers.set("Upgrade", "websocket");
-  return new Response("Upgrade Required", { status: 426, headers });
-}
+// Map of runId → Set of WebSockets
+const runSubscribers: Map<string, Set<WebSocket>> = new Map();
 
-export function UPGRADE(client: WebSocket, server: WebSocketServer) {
-  const subscriber = new Redis(process.env.REDIS_URL!);
+// Handle incoming Pub/Sub messages
+redisSubscriber.on("message", (channel, message) => {
+  const runId = channel.split(":")[1];
+  const sockets = runSubscribers.get(runId);
+  if (!sockets) return;
+
+  const data: LiveRunEvent = JSON.parse(message);
+
+  sockets.forEach((ws) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ ...data, text: null }));
+    }
+  });
+});
+
+export async function UPGRADE(client: WebSocket, server: WebSocketServer) {
   let runId: string;
 
+  // Receive runId from client
   client.once("message", async (message) => {
     runId = message.toString();
 
+    // Track view count
     await updateLiveRunViews(runId, 1);
 
-    let lastEvent: LiveRunEvent | null = null;
+    // Send initial text
+    const text = await redis.get(`liveRunText:${runId}`);
+    client.send(
+      JSON.stringify({ file: null, language: null, moves: [], text }),
+    );
 
-    const sendText = async () => {
-      const text = await redis.get(`liveRunText:${runId}`);
-
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(
-          JSON.stringify({
-            file: lastEvent?.file,
-            language: lastEvent?.language,
-            moves: [],
-            text,
-          }),
-        );
-      }
-    };
-
-    sendText();
-
-    client.on("message", sendText);
-
-    subscriber.subscribe(`liveRunEvent:${runId}`, (err, count) => {
-      if (err) {
-        console.error("Failed to subscribe", err);
-        client.close(1011, "Redis subscription failed");
-      }
-    });
-
-    subscriber.on("message", (channel, message) => {
-      const data: LiveRunEvent = JSON.parse(message);
-
-      lastEvent = data;
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify({ ...data, text: null }));
-      }
-    });
+    // Add WebSocket to subscribers
+    if (!runSubscribers.has(runId)) {
+      runSubscribers.set(runId, new Set());
+      await redisSubscriber.subscribe(`liveRunEvent:${runId}`);
+    }
+    runSubscribers.get(runId)!.add(client);
   });
 
+  // Handle client disconnect
   client.once("close", async () => {
-    await subscriber.unsubscribe(`liveRunEvent:${runId}`);
-    subscriber.quit();
+    const set = runSubscribers.get(runId);
+    if (set) {
+      set.delete(client);
+      if (set.size === 0) {
+        await redisSubscriber.unsubscribe(`liveRunEvent:${runId}`);
+        runSubscribers.delete(runId);
+      }
+    }
+
     await updateLiveRunViews(runId, -1);
   });
 
   client.on("error", (err) => {
     console.error("WebSocket error:", err);
   });
+}
+
+export function GET(req: NextRequest) {
+  const headers = new Headers();
+  headers.set("Connection", "Upgrade");
+  headers.set("Upgrade", "websocket");
+  return new Response("Upgrade Required", { status: 426, headers });
 }

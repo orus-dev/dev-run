@@ -44,7 +44,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.94.1",
+    "@supabase/supabase-js": "^2.95.3",
     "@types/js-cookie": "^3.0.6",
     "@uiw/codemirror-theme-vscode": "^4.25.4",
     "@uiw/react-codemirror": "^4.25.4",

@@ -21,7 +21,7 @@ export default function LiveRunRow({
   const [problem] = useAction(() => getProblem(run.problem));
 
   const now = new Date().getTime() + 1000;
-  const isTop = run.views > 5;
+  const isTop = run.views >= 5;
 
   return (
     <TableRow

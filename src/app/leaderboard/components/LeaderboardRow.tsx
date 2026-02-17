@@ -48,7 +48,7 @@ const LeaderboardRow = ({
         </div>
       </td>
 
-      {/* Wins */}
+      {/* World Records */}
       <td className="py-4 px-4 text-center font-mono font-semibold text-primary">
         {run.wins}
       </td>

@@ -1,11 +1,9 @@
-"use server";
-
 import "server-only";
+
 import { LiveRun, LiveRunMove } from "./types";
-import { SupabaseClient } from "@supabase/supabase-js";
 import { redis } from "@/lib/redis";
-import Redis from "ioredis";
 import { applyMoves } from "@/lib/move";
+import { supabaseApiClient } from "@/lib/supabase/server";
 
 /** -------------------- Live Runs in Redis -------------------- */
 
@@ -46,6 +44,7 @@ export async function updateLiveRunViews(
 ): Promise<number | null> {
   const run = await getLiveRun(id);
   if (!run) return null;
+  if (run.views === 0 && increment < 0) return null;
   run.views += increment;
   await redis.set(`liveRun:${run.id}`, JSON.stringify(run));
   return run.views;
@@ -65,7 +64,7 @@ export async function getLiveRuns(): Promise<LiveRun[]> {
  * Remove a live run from Redis
  */
 export async function removeLiveRun(id: string) {
-  await redis.del(`liveRun:${id}`, `liveRunEvent:${id}`);
+  await redis.del(`liveRun:${id}`, `liveRunEvent:${id}`, `liveRunText:${id}`);
 }
 
 /** -------------------- Live Run Moves -------------------- */
@@ -107,15 +106,11 @@ export async function addLiveRunEvent(
  * Submit a run to Supabase (persistent storage)
  * and remove it from Redis
  */
-export async function submitRun(
-  supabase: SupabaseClient,
-  run: LiveRun,
-  user_id: string,
-) {
+export async function submitRun(run: LiveRun, user_id: string) {
   const now = new Date();
   const durationMs = now.getTime() - run.start;
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseApiClient
     .from("runs")
     .insert([
       {
