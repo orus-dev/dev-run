@@ -9,15 +9,30 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import LiveRunRow from "./components/LiveRunRow";
-import useAction, { useActionInterval } from "@/hook/use-action";
+import { useActionInterval } from "@/hook/use-action";
 import { getLiveRuns } from "@/modules/live-run/actions";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export default function LiveRuns() {
   const [liveRuns] = useActionInterval(getLiveRuns, 1500);
 
-  // Sort top runners (status === 'pb') to the top
-  const sortedRuns = [...(liveRuns || [])];
+  const sortedRuns = (liveRuns || []).sort((a, b) => {
+    const aTrending = a.views >= 5;
+    const bTrending = b.views >= 5;
+
+    if (aTrending && bTrending) {
+      // Both trending → sort by views descending, then timestamp descending
+      if (b.views !== a.views) return b.views - a.views;
+      return b.start - a.start;
+    } else if (aTrending) {
+      return -1; // a goes first
+    } else if (bTrending) {
+      return 1; // b goes first
+    } else {
+      // Neither trending → sort by timestamp descending
+      return b.start - a.start;
+    }
+  });
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -26,7 +41,7 @@ export default function LiveRuns() {
         <div>
           <h1 className="text-4xl font-bold">Live Runs</h1>
           <p className="text-muted-foreground">
-            42 live runs · Streaming in real time
+            {liveRuns?.length} live runs · Streaming in real time
           </p>
         </div>
 
